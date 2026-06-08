@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Leaf, Twitter, Instagram, Github } from 'lucide-react'
+import { Leaf, ExternalLink } from 'lucide-react'
 
 export default function Footer() {
   return (
@@ -18,9 +18,9 @@ export default function Footer() {
               Turn sustainable actions into real impact. Earn rewards while helping India reduce its carbon footprint.
             </p>
             <div className="flex gap-4 mt-4">
-              <a href="#" className="text-white/30 hover:text-green-400 transition-colors"><Twitter className="w-5 h-5" /></a>
-              <a href="#" className="text-white/30 hover:text-green-400 transition-colors"><Instagram className="w-5 h-5" /></a>
-              <a href="#" className="text-white/30 hover:text-green-400 transition-colors"><Github className="w-5 h-5" /></a>
+              <a href="#" className="text-white/30 hover:text-green-400 transition-colors text-sm font-medium">Twitter</a>
+              <a href="#" className="text-white/30 hover:text-green-400 transition-colors text-sm font-medium">Instagram</a>
+              <a href="#" className="text-white/30 hover:text-green-400 transition-colors text-sm font-medium">GitHub</a>
             </div>
           </div>
 

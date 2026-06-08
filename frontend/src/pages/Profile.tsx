@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useAuth } from '../hooks/useAuth'
 import { apiClient } from '../api/client'
@@ -6,7 +6,7 @@ import type { Activity, ActivityListResponse, Badge } from '../types'
 import { getLevelInfo } from '../types'
 import ActivityCard from '../components/ActivityCard'
 import BadgeCard from '../components/BadgeCard'
-import { Camera, Edit2, Check, X, Leaf, Zap, Trophy, Calendar } from 'lucide-react'
+import { Edit2, Check, X, Leaf, Zap, Trophy, Calendar } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 export default function Profile() {
@@ -19,7 +19,6 @@ export default function Profile() {
   const [editing, setEditing] = useState(false)
   const [name, setName] = useState(user?.name || '')
   const [filter, setFilter] = useState<string>('all')
-  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const url = filter === 'all'

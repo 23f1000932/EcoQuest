@@ -20,7 +20,7 @@ const ACTIVITY_INFO = [
 ]
 
 export default function Upload() {
-  const { user, refreshUser } = useAuth()
+  const { refreshUser } = useAuth()
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [description, setDescription] = useState('')
   const [loading, setLoading] = useState(false)

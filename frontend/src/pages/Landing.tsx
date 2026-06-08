@@ -8,7 +8,7 @@ import type { ImpactStats, Reward } from '../types'
 import { ACTIVITY_ICONS } from '../types'
 import Footer from '../components/Footer'
 import {
-  Leaf, ArrowRight, Users, TreePine, Zap, Wind,
+  Leaf, ArrowRight,
   Camera, Shield, Trophy, Gift, ChevronDown, ChevronUp
 } from 'lucide-react'
 

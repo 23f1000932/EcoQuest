@@ -70,7 +70,6 @@ export default function AIVerificationModal({ result, onClose }: Props) {
   }
 
   const config = activity ? statusConfig[activity.status] : null
-  const StatusIcon = config?.icon || CheckCircle
   const icon = activity ? (ACTIVITY_ICONS[activity.activity_type] || '🌱') : '🌱'
 
   return (

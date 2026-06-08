@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
-  ResponsiveContainer, Tooltip, XAxis, YAxis, Legend
+  ResponsiveContainer, Tooltip, XAxis, YAxis
 } from 'recharts'
 import { apiClient } from '../api/client'
 import type { ImpactStats } from '../types'
@@ -159,7 +159,7 @@ export default function Impact() {
               </Pie>
               <Tooltip
                 contentStyle={{ background: '#0a0f0a', border: '1px solid rgba(34,197,94,0.3)', borderRadius: '12px', color: '#fff' }}
-                formatter={(v: number) => [`${v}%`, '']}
+                formatter={(v: any) => [`${v}%`, '']}
               />
             </PieChart>
           </ResponsiveContainer>

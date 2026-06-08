@@ -1,5 +1,4 @@
-import { useCallback, useState } from 'react'
-import { useDropzone } from 'react-dropzone'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Upload, Image, X, CheckCircle } from 'lucide-react'
 

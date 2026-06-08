@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { apiClient } from '../api/client'
-import type { Activity } from '../types'
+import type { } from '../types'
 import { ACTIVITY_ICONS } from '../types'
 import { CheckCircle, XCircle, Clock, ShieldCheck, Users, BarChart3, Loader2 } from 'lucide-react'
 import toast from 'react-hot-toast'

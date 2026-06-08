@@ -14,7 +14,7 @@ import {
 } from 'lucide-react'
 
 export default function Dashboard() {
-  const { user, refreshUser } = useAuth()
+  const { user } = useAuth()
   const [recentActivities, setRecentActivities] = useState<Activity[]>([])
   const [topUsers, setTopUsers] = useState<LeaderboardEntry[]>([])
   const [loading, setLoading] = useState(true)
