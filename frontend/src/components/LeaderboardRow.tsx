@@ -26,7 +26,7 @@ export default function LeaderboardRow({ entry, isCurrentUser }: Props) {
         isCurrentUser
           ? 'bg-green-500/15 border border-green-400/40 shadow-lg shadow-green-500/10'
           : entry.rank <= 3
-          ? 'bg-white/5 border border-white/10 hover:bg-white/8'
+          ? 'bg-white/5 border border-white/10 hover:bg-white/10'
           : 'hover:bg-white/3 border border-transparent hover:border-white/5'
       }`}
     >

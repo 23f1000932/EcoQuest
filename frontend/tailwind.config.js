@@ -5,6 +5,10 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   darkMode: "class",
+  safelist: [
+    'bg-white/3', 'hover:bg-white/3', 'bg-white/8', 'focus:bg-white/8',
+    'hover:bg-white/8', 'bg-green-500/15', 'bg-green-500/8',
+  ],
   theme: {
     extend: {
       colors: {
