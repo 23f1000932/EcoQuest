@@ -14,35 +14,38 @@ export default function BadgeCard({ badge, earned = true, index = 0 }: Props) {
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: index * 0.06 }}
-      className={`relative flex flex-col items-center gap-2 p-4 rounded-2xl border transition-all duration-200 ${
+      className={`relative flex flex-col items-center gap-2 p-4 rounded-xl border transition-all duration-200 text-center ${
         earned
-          ? 'border-green-500/30 bg-green-500/10 hover:border-green-400/50 hover:bg-green-500/15 cursor-default'
-          : 'border-white/10 bg-white/3 opacity-50'
+          ? 'border-outline-variant bg-surface-container-lowest hover:border-primary/40 cursor-default shadow-sm'
+          : 'border-dashed border-outline-variant bg-surface-bright opacity-60'
       }`}
       title={badge.description}
     >
       {!earned && (
         <div className="absolute top-2 right-2">
-          <Lock className="w-3 h-3 text-white/30" />
+          <Lock className="w-3 h-3 text-outline" />
         </div>
       )}
       <div
-        className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl ${
-          earned ? 'shadow-lg' : 'grayscale'
+        className={`w-14 h-14 rounded-full flex items-center justify-center text-2xl ${
+          earned
+            ? 'bg-gradient-to-br from-primary/15 to-secondary/15'
+            : 'bg-surface-container'
         }`}
-        style={earned ? { boxShadow: `0 0 20px ${badge.color}40` } : {}}
       >
         {badge.icon}
       </div>
-      <div className="text-center">
-        <p className={`text-xs font-semibold ${earned ? 'text-white' : 'text-white/40'}`}>{badge.name}</p>
+      <div>
+        <p className={`text-xs font-semibold ${earned ? 'text-on-background' : 'text-outline'}`}>
+          {badge.name}
+        </p>
         {earned && badge.earned_at && (
-          <p className="text-green-400/50 text-xs mt-0.5">
+          <p className="text-primary text-xs mt-0.5">
             {new Date(badge.earned_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
           </p>
         )}
         {!earned && (
-          <p className="text-white/30 text-xs mt-0.5">{badge.points_req} pts</p>
+          <p className="text-on-surface-variant text-xs mt-0.5">{badge.points_req} pts</p>
         )}
       </div>
     </motion.div>
