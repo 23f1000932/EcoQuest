@@ -18,7 +18,7 @@ export default function App() {
   if (loading) return null
 
   return (
-    <div className="min-h-screen bg-[#050d05]">
+    <div className="min-h-screen bg-background text-on-background">
       <Navbar />
       <Routes>
         <Route path="/" element={<Landing />} />
@@ -34,13 +34,15 @@ export default function App() {
         position="top-right"
         toastOptions={{
           style: {
-            background: '#0f1a0f',
-            color: '#f0fdf4',
-            border: '1px solid rgba(34,197,94,0.2)',
+            background: '#ffffff',
+            color: '#0b1c30',
+            border: '1px solid #bccbb9',
             borderRadius: '12px',
+            boxShadow: '0 10px 15px -3px rgba(0,0,0,0.08)',
+            fontFamily: 'Inter, system-ui, sans-serif',
           },
-          success: { iconTheme: { primary: '#22c55e', secondary: '#050d05' } },
-          error: { iconTheme: { primary: '#ef4444', secondary: '#050d05' } },
+          success: { iconTheme: { primary: '#006e2f', secondary: '#ffffff' } },
+          error: { iconTheme: { primary: '#ba1a1a', secondary: '#ffffff' } },
         }}
       />
     </div>
