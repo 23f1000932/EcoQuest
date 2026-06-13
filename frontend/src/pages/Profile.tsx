@@ -50,7 +50,7 @@ export default function Profile() {
 
   return (
     <div className="page-container max-w-4xl">
-      {/* Profile Header */}
+      {/* Profile header card */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -59,16 +59,14 @@ export default function Profile() {
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
           {/* Avatar */}
           <div className="relative flex-shrink-0">
-            <div className="w-24 h-24 rounded-2xl overflow-hidden bg-gradient-to-br from-green-600 to-emerald-700">
+            <div className="w-24 h-24 rounded-full overflow-hidden bg-primary/10 border-2 border-primary flex items-center justify-center">
               {user.avatar_url ? (
                 <img src={user.avatar_url} alt={user.name} className="w-full h-full object-cover" />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-white text-4xl font-black">
-                  {user.name[0]?.toUpperCase()}
-                </div>
+                <span className="text-primary text-4xl font-black">{user.name[0]?.toUpperCase()}</span>
               )}
             </div>
-            <div className="absolute -bottom-2 -right-2 bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+            <div className="absolute -bottom-1 -right-1 bg-primary text-on-primary text-xs font-bold px-2 py-0.5 rounded-full">
               Lv.{user.level}
             </div>
           </div>
@@ -84,42 +82,46 @@ export default function Profile() {
                   onChange={e => setName(e.target.value)}
                   autoFocus
                 />
-                <button onClick={handleSaveName} className="p-2 bg-green-500/20 rounded-xl text-green-400 hover:bg-green-500/30"><Check className="w-4 h-4" /></button>
-                <button onClick={() => setEditing(false)} className="p-2 bg-white/5 rounded-xl text-white/40 hover:bg-white/10"><X className="w-4 h-4" /></button>
+                <button onClick={handleSaveName} className="p-2 bg-primary/10 rounded-xl text-primary hover:bg-primary/20 transition-colors">
+                  <Check className="w-4 h-4" />
+                </button>
+                <button onClick={() => setEditing(false)} className="p-2 bg-surface-container rounded-xl text-on-surface-variant hover:bg-surface-container-high transition-colors">
+                  <X className="w-4 h-4" />
+                </button>
               </div>
             ) : (
-              <div className="flex items-center gap-2 mb-1">
-                <h1 className="text-2xl font-black text-white">{user.name}</h1>
-                <button id="edit-name-btn" onClick={() => setEditing(true)} className="p-1 text-white/30 hover:text-white/60">
+              <div className="flex items-center gap-2 mb-1 justify-center sm:justify-start">
+                <h1 className="text-2xl font-black text-on-background font-geist">{user.name}</h1>
+                <button id="edit-name-btn" onClick={() => setEditing(true)} className="p-1 text-on-surface-variant hover:text-primary transition-colors">
                   <Edit2 className="w-4 h-4" />
                 </button>
               </div>
             )}
-            <p className="text-white/40 text-sm">{user.email}</p>
+            <p className="text-on-surface-variant text-sm">{user.email}</p>
             <div className="flex flex-wrap items-center gap-3 mt-3 justify-center sm:justify-start">
-              <span className="badge-chip bg-green-500/15 text-green-400 border border-green-500/20">
+              <span className="badge-chip bg-primary/10 text-primary border border-primary/20">
                 🌱 {levelInfo.label}
               </span>
-              <span className="text-white/30 text-sm flex items-center gap-1">
+              <span className="text-on-surface-variant text-sm flex items-center gap-1">
                 <Calendar className="w-3.5 h-3.5" />
                 Joined {new Date(user.created_at).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })}
               </span>
             </div>
           </div>
 
-          {/* Stats */}
+          {/* Stats grid */}
           <div className="grid grid-cols-2 gap-3 flex-shrink-0">
             {[
-              { label: 'Points', value: user.points.toLocaleString(), icon: <Zap className="w-3.5 h-3.5" />, color: 'text-green-400' },
-              { label: 'CO₂ Saved', value: `${user.carbon_saved.toFixed(1)}kg`, icon: <Leaf className="w-3.5 h-3.5" />, color: 'text-emerald-400' },
-              { label: 'Streak', value: `${user.streak_days}d 🔥`, icon: null, color: 'text-orange-400' },
-              { label: 'Badges', value: user.badges?.length || 0, icon: <Trophy className="w-3.5 h-3.5" />, color: 'text-yellow-400' },
+              { label: 'Points',    value: user.points.toLocaleString(),       icon: <Zap className="w-3.5 h-3.5" />,    color: 'text-primary' },
+              { label: 'CO₂ Saved', value: `${user.carbon_saved.toFixed(1)}kg`, icon: <Leaf className="w-3.5 h-3.5" />,   color: 'text-secondary' },
+              { label: 'Streak',    value: `${user.streak_days}d 🔥`,           icon: null,                                color: 'text-orange-500' },
+              { label: 'Badges',    value: user.badges?.length || 0,            icon: <Trophy className="w-3.5 h-3.5" />, color: 'text-yellow-500' },
             ].map(({ label, value, icon, color }) => (
-              <div key={label} className="bg-white/3 rounded-xl p-3 text-center">
+              <div key={label} className="bg-surface-container rounded-xl p-3 text-center">
                 <div className={`flex items-center justify-center gap-1 ${color} mb-1 text-xs`}>
                   {icon} {label}
                 </div>
-                <p className="text-white font-bold">{value}</p>
+                <p className="text-on-surface font-bold">{value}</p>
               </div>
             ))}
           </div>
@@ -127,7 +129,7 @@ export default function Profile() {
 
         {/* Level progress */}
         <div className="mt-6">
-          <div className="flex justify-between text-xs text-white/40 mb-1.5">
+          <div className="flex justify-between text-xs text-on-surface-variant mb-1.5">
             <span>{levelInfo.label}</span>
             <span>{levelInfo.next ? `${levelInfo.next.label} in ${levelInfo.next.min - user.points} pts` : '⭐ Max Level!'}</span>
           </div>
@@ -144,7 +146,7 @@ export default function Profile() {
 
       {/* Badges */}
       <div className="glass-card p-6 mb-6">
-        <h2 className="text-white font-bold text-lg mb-4">Badges</h2>
+        <h2 className="text-on-background font-bold text-lg mb-4 font-geist">Badges</h2>
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
           {allBadges.map((badge, i) => (
             <BadgeCard
@@ -160,14 +162,16 @@ export default function Profile() {
       {/* Activity History */}
       <div>
         <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
-          <h2 className="text-white font-bold text-lg">Activity History ({total})</h2>
+          <h2 className="text-on-background font-bold text-lg font-geist">Activity History ({total})</h2>
           <div className="flex gap-2">
             {['all', 'approved', 'pending', 'rejected'].map(f => (
               <button
                 key={f}
                 onClick={() => { setFilter(f); setPage(1) }}
-                className={`px-3 py-1 rounded-lg text-xs font-medium capitalize transition-all ${
-                  filter === f ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'text-white/40 hover:text-white/70'
+                className={`px-3 py-1 rounded-full text-xs font-semibold capitalize transition-all ${
+                  filter === f
+                    ? 'bg-primary text-on-primary'
+                    : 'bg-surface-container text-on-surface-variant hover:text-primary hover:bg-surface-container-high'
                 }`}
               >
                 {f}
@@ -175,11 +179,11 @@ export default function Profile() {
             ))}
           </div>
         </div>
-        <div className="space-y-3">
+        <div className="glass-card overflow-hidden">
           {activities.map((a, i) => <ActivityCard key={a.id} activity={a} index={i} />)}
           {activities.length === 0 && (
-            <div className="glass-card p-10 text-center">
-              <p className="text-white/30">No activities found</p>
+            <div className="p-10 text-center">
+              <p className="text-on-surface-variant">No activities found</p>
             </div>
           )}
         </div>
@@ -188,7 +192,7 @@ export default function Profile() {
         {pages > 1 && (
           <div className="flex items-center justify-center gap-2 mt-6">
             <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="btn-secondary text-sm px-4 py-2 disabled:opacity-30">← Prev</button>
-            <span className="text-white/40 text-sm">Page {page} of {pages}</span>
+            <span className="text-on-surface-variant text-sm">Page {page} of {pages}</span>
             <button onClick={() => setPage(p => Math.min(pages, p + 1))} disabled={page === pages} className="btn-secondary text-sm px-4 py-2 disabled:opacity-30">Next →</button>
           </div>
         )}
