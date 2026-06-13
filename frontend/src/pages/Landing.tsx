@@ -12,7 +12,7 @@ import {
   Camera, Shield, Trophy, Gift, ChevronDown, ChevronUp
 } from 'lucide-react'
 
-// ── Animated Counter ──────────────────────────────────────────
+// ── Animated Counter ──────────────────────────────────────────────
 function AnimatedCounter({ end, duration = 2000, suffix = '' }: { end: number; duration?: number; suffix?: string }) {
   const [count, setCount] = useState(0)
   const ref = useRef<HTMLSpanElement>(null)
@@ -20,9 +20,8 @@ function AnimatedCounter({ end, duration = 2000, suffix = '' }: { end: number; d
 
   useEffect(() => {
     if (!inView) return
-    const start = 0
     const step = end / (duration / 16)
-    let current = start
+    let current = 0
     const timer = setInterval(() => {
       current += step
       if (current >= end) { setCount(end); clearInterval(timer) }
@@ -34,7 +33,7 @@ function AnimatedCounter({ end, duration = 2000, suffix = '' }: { end: number; d
   return <span ref={ref}>{count.toLocaleString()}{suffix}</span>
 }
 
-// ── FAQ Accordion ─────────────────────────────────────────────
+// ── FAQ ───────────────────────────────────────────────────────────
 const faqs = [
   { q: 'How does AI verification work?', a: 'We use Google Gemini Vision AI to analyze your uploaded images. The AI detects the eco-friendly activity shown, assigns a confidence score, and awards points if confidence ≥ 70%.' },
   { q: 'What activities are accepted?', a: 'Tree planting, community cleanups, waste segregation, public transport use, cycling, reusable bottles/bags, and other eco actions. Upload a clear photo of your activity.' },
@@ -49,13 +48,15 @@ function FAQ() {
   return (
     <div className="space-y-3">
       {faqs.map((faq, i) => (
-        <motion.div key={i} className="glass-card overflow-hidden">
+        <div key={i} className="glass-card overflow-hidden">
           <button
-            className="w-full flex items-center justify-between p-5 text-left"
+            className="w-full flex items-center justify-between p-5 text-left hover:bg-surface-container-low transition-colors"
             onClick={() => setOpen(open === i ? null : i)}
           >
-            <span className="text-white font-medium">{faq.q}</span>
-            {open === i ? <ChevronUp className="w-5 h-5 text-green-400 flex-shrink-0" /> : <ChevronDown className="w-5 h-5 text-white/40 flex-shrink-0" />}
+            <span className="text-on-surface font-medium">{faq.q}</span>
+            {open === i
+              ? <ChevronUp className="w-5 h-5 text-primary flex-shrink-0" />
+              : <ChevronDown className="w-5 h-5 text-on-surface-variant flex-shrink-0" />}
           </button>
           <motion.div
             initial={false}
@@ -63,23 +64,23 @@ function FAQ() {
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <p className="px-5 pb-5 text-white/50 text-sm leading-relaxed">{faq.a}</p>
+            <p className="px-5 pb-5 text-on-surface-variant text-sm leading-relaxed">{faq.a}</p>
           </motion.div>
-        </motion.div>
+        </div>
       ))}
     </div>
   )
 }
 
 const challenges = [
-  { type: 'Tree Plantation', points: 100, color: 'from-green-600 to-emerald-700' },
-  { type: 'Community Cleanup', points: 80, color: 'from-blue-600 to-cyan-700' },
-  { type: 'Cycling', points: 25, color: 'from-orange-500 to-yellow-600' },
-  { type: 'Public Transport', points: 30, color: 'from-purple-600 to-violet-700' },
-  { type: 'Waste Segregation', points: 20, color: 'from-teal-600 to-green-700' },
-  { type: 'Reusable Bottle', points: 10, color: 'from-sky-500 to-blue-600' },
-  { type: 'Cloth Bag', points: 10, color: 'from-amber-500 to-orange-600' },
-  { type: 'Other Eco Action', points: 15, color: 'from-green-500 to-teal-600' },
+  { type: 'Tree Plantation', points: 100 },
+  { type: 'Community Cleanup', points: 80 },
+  { type: 'Cycling', points: 25 },
+  { type: 'Public Transport', points: 30 },
+  { type: 'Waste Segregation', points: 20 },
+  { type: 'Reusable Bottle', points: 10 },
+  { type: 'Cloth Bag', points: 10 },
+  { type: 'Other Eco Action', points: 15 },
 ]
 
 const steps = [
@@ -90,7 +91,6 @@ const steps = [
   { num: 5, icon: Trophy, title: 'Win rewards', desc: 'Climb leaderboards and unlock real rewards.' },
 ]
 
-// Simulated monthly data for impact chart
 const monthlyData = [
   { month: 'Jan', activities: 320 }, { month: 'Feb', activities: 580 },
   { month: 'Mar', activities: 790 }, { month: 'Apr', activities: 1100 },
@@ -109,50 +109,41 @@ export default function Landing() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-[#050d05]">
-      {/* ── Hero ─────────────────────────────────────────────── */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Background */}
-        <div className="absolute inset-0 bg-hero-gradient opacity-90" />
-        <div className="absolute inset-0 bg-grid opacity-30" />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#050d05]" />
+    <div className="min-h-screen bg-background">
+      {/* ── Hero ──────────────────────────────────────────────────── */}
+      <section className="relative pt-32 pb-24 md:pt-48 md:pb-32 px-4 md:px-20 overflow-hidden">
+        {/* Light gradient overlay */}
+        <div className="absolute inset-0 hero-gradient opacity-10 -z-10" />
+        {/* Floating blobs */}
+        <div className="absolute top-20 left-10 w-64 h-64 bg-primary-container/40 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-float" />
+        <div className="absolute top-40 right-20 w-72 h-72 bg-secondary-container/40 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float-delayed" />
 
-        {/* Floating decorative elements */}
-        <div className="absolute top-20 left-10 text-5xl animate-float opacity-60">🌳</div>
-        <div className="absolute top-40 right-16 text-4xl animate-float-delayed opacity-50">🌿</div>
-        <div className="absolute bottom-40 left-20 text-3xl animate-float-slow opacity-40">♻️</div>
-        <div className="absolute bottom-60 right-10 text-4xl animate-float opacity-50">🚴</div>
-        <div className="absolute top-1/3 left-1/4 text-2xl animate-float-delayed opacity-30">🌱</div>
-
-        {/* Glowing orbs */}
-        <div className="absolute top-1/4 left-1/3 w-64 h-64 bg-green-500/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-emerald-500/15 rounded-full blur-3xl" />
-
-        <div className="relative z-10 max-w-5xl mx-auto px-4 text-center pt-24 pb-16">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          {/* Left copy */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.7 }}
+            className="z-10"
           >
-            <div className="inline-flex items-center gap-2 bg-green-500/20 border border-green-500/30 rounded-full px-4 py-2 mb-8">
-              <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-              <span className="text-green-300 text-sm font-medium">India's #1 Sustainability Challenge Platform</span>
+            <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-2 mb-6">
+              <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+              <span className="text-primary text-sm font-medium">India's #1 Sustainability Platform</span>
             </div>
 
-            <h1 className="text-5xl md:text-7xl font-black text-white leading-tight mb-6 text-glow">
-              Make India Greener,
-              <br />
+            <h1 className="text-4xl md:text-6xl font-black text-on-background leading-tight mb-6 font-geist">
+              Make India Greener,<br />
               <span className="gradient-text">One Action at a Time.</span>
             </h1>
 
-            <p className="text-white/60 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
-              Upload sustainable actions, earn points, climb leaderboards, and win rewards
-              while helping India reduce its carbon footprint.
+            <p className="text-on-surface-variant text-lg max-w-lg mb-8 leading-relaxed">
+              Upload sustainable actions, earn points, climb leaderboards, and win rewards.
+              Join the movement for a sustainable tomorrow.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div className="flex flex-col sm:flex-row gap-4">
               {user ? (
-                <Link to="/dashboard" className="btn-primary text-lg px-8 py-4 flex items-center gap-2 animate-pulse-green">
+                <Link to="/dashboard" className="btn-primary text-base px-8 py-3.5 flex items-center gap-2 justify-center">
                   Go to Dashboard <ArrowRight className="w-5 h-5" />
                 </Link>
               ) : (
@@ -160,52 +151,105 @@ export default function Landing() {
                   <button
                     id="hero-join-btn"
                     onClick={signInWithGoogle}
-                    className="btn-primary text-lg px-8 py-4 flex items-center gap-2"
+                    className="btn-primary text-base px-8 py-3.5 flex items-center gap-2 justify-center"
                   >
                     Join Challenge <ArrowRight className="w-5 h-5" />
                   </button>
-                  <a href="#how-it-works" className="btn-outline text-lg px-8 py-4">
+                  <a href="#how-it-works" className="btn-outline text-base px-8 py-3.5 flex items-center justify-center">
                     Learn More
                   </a>
                 </>
               )}
             </div>
           </motion.div>
+
+          {/* Right — floating bento cards */}
+          <div className="relative h-96 hidden lg:block">
+            {/* Card 1 */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="absolute top-8 right-8 w-60 glass-card p-4 animate-float"
+            >
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center text-primary">
+                  <Leaf className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-on-surface font-semibold text-sm">Tree Planted</p>
+                  <p className="text-on-surface-variant text-xs">Just now</p>
+                </div>
+              </div>
+              <div className="h-2 w-full bg-surface-container rounded-full overflow-hidden">
+                <div className="h-full bg-primary w-3/4 rounded-full" />
+              </div>
+            </motion.div>
+
+            {/* Card 2 */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+              className="absolute bottom-16 left-0 w-68 glass-surface rounded-xl p-4 animate-float-delayed shadow-card"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-14 h-14 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-2xl flex-shrink-0">
+                  🌱
+                </div>
+                <div>
+                  <p className="text-on-surface font-semibold text-sm">Priya S.</p>
+                  <p className="text-on-surface-variant text-xs mb-1.5">Logged: Zero Waste Day</p>
+                  <div className="inline-flex items-center gap-1 bg-secondary-container/40 text-on-secondary-container px-2 py-0.5 rounded-full text-xs font-bold">
+                    ⭐ +50 Pts
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Floating icon */}
+            <motion.div
+              animate={{ y: [0, -8, 0] }}
+              transition={{ duration: 3, repeat: Infinity, delay: 1 }}
+              className="absolute top-1/2 left-1/4 w-12 h-12 bg-tertiary-container/60 rounded-full flex items-center justify-center shadow-card"
+            >
+              <span className="text-xl">🚴</span>
+            </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* ── Stats Bar ─────────────────────────────────────────── */}
-      <section className="py-16 border-y border-green-500/10 bg-black/30">
-        <div className="max-w-6xl mx-auto px-4">
+      {/* ── Stats Bar ─────────────────────────────────────────────── */}
+      <section className="py-14 bg-surface-container-low border-y border-outline-variant/30">
+        <div className="max-w-6xl mx-auto px-4 md:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {[
-              { icon: '👥', label: 'Users Joined', value: impact?.total_users || 1247, suffix: '+' },
-              { icon: '🌳', label: 'Trees Planted', value: impact?.trees_planted || 3211, suffix: '+' },
-              { icon: '⚡', label: 'Actions Logged', value: impact?.total_activities || 8934, suffix: '+' },
-              { icon: '💨', label: 'CO₂ Saved (kg)', value: impact ? Math.round(impact.total_carbon_saved) : 42180, suffix: 'kg' },
+              { icon: '👥', label: 'Users Joined',    value: impact?.total_users || 1247,    suffix: '+' },
+              { icon: '🌳', label: 'Trees Planted',   value: impact?.trees_planted || 3211,   suffix: '+' },
+              { icon: '⚡', label: 'Actions Logged',  value: impact?.total_activities || 8934, suffix: '+' },
+              { icon: '💨', label: 'CO₂ Saved (kg)',  value: impact ? Math.round(impact.total_carbon_saved) : 42180, suffix: 'kg' },
             ].map(({ icon, label, value, suffix }) => (
               <div key={label} className="text-center">
                 <div className="text-3xl mb-2">{icon}</div>
-                <div className="text-white text-3xl md:text-4xl font-black">
-                  <AnimatedCounter end={value} suffix="" />
-                  <span className="text-green-400">{suffix}</span>
+                <div className="text-on-background text-3xl md:text-4xl font-black font-geist">
+                  <AnimatedCounter end={value} />
+                  <span className="text-primary">{suffix}</span>
                 </div>
-                <p className="text-white/40 text-sm mt-1">{label}</p>
+                <p className="text-on-surface-variant text-sm mt-1">{label}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── How It Works ─────────────────────────────────────── */}
-      <section id="how-it-works" className="py-24 max-w-6xl mx-auto px-4">
+      {/* ── How It Works ──────────────────────────────────────────── */}
+      <section id="how-it-works" className="py-24 max-w-6xl mx-auto px-4 md:px-8">
         <div className="text-center mb-16">
           <h2 className="section-title">How It Works</h2>
-          <p className="text-white/40">Five simple steps to start earning rewards for your eco actions</p>
+          <p className="text-on-surface-variant">Five simple steps to start earning rewards for your eco actions</p>
         </div>
         <div className="relative">
-          {/* Timeline line */}
-          <div className="hidden md:block absolute top-8 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-green-500/30 to-transparent" />
+          <div className="hidden md:block absolute top-8 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-outline-variant to-transparent" />
           <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
             {steps.map(({ num, icon: Icon, title, desc }, i) => (
               <motion.div
@@ -217,58 +261,58 @@ export default function Landing() {
                 className="flex flex-col items-center text-center"
               >
                 <div className="relative mb-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg shadow-green-500/30 z-10 relative">
-                    <Icon className="w-7 h-7 text-white" />
+                  <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center shadow-sm z-10 relative">
+                    <Icon className="w-7 h-7 text-on-primary" />
                   </div>
-                  <div className="absolute -top-1 -right-1 w-6 h-6 bg-emerald-600 rounded-full flex items-center justify-center text-white text-xs font-bold">{num}</div>
+                  <div className="absolute -top-1 -right-1 w-6 h-6 bg-primary-container rounded-full flex items-center justify-center text-on-primary-container text-xs font-bold">{num}</div>
                 </div>
-                <h3 className="text-white font-semibold mb-2">{title}</h3>
-                <p className="text-white/40 text-sm">{desc}</p>
+                <h3 className="text-on-background font-semibold mb-2">{title}</h3>
+                <p className="text-on-surface-variant text-sm">{desc}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── Challenges ───────────────────────────────────────── */}
-      <section className="py-24 bg-black/20">
-        <div className="max-w-6xl mx-auto px-4">
+      {/* ── Eco Challenges ────────────────────────────────────────── */}
+      <section className="py-24 bg-surface-container-low">
+        <div className="max-w-6xl mx-auto px-4 md:px-8">
           <div className="text-center mb-16">
             <h2 className="section-title">Eco Challenges</h2>
-            <p className="text-white/40">Eight categories of verified eco-friendly actions</p>
+            <p className="text-on-surface-variant">Eight categories of verified eco-friendly actions</p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {challenges.map(({ type, points, color }, i) => (
+            {challenges.map(({ type, points }, i) => (
               <motion.div
                 key={type}
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className={`glass-card-hover p-5 bg-gradient-to-br ${color} bg-opacity-10`}
+                className="glass-card-hover p-5"
               >
-                <div className="text-3xl mb-3">{ACTIVITY_ICONS[type]}</div>
-                <h3 className="text-white font-semibold text-sm">{type}</h3>
-                <p className="text-green-400 font-bold mt-1">+{points} pts</p>
+                <div className="text-3xl mb-3">{ACTIVITY_ICONS[type] || '🌱'}</div>
+                <h3 className="text-on-surface font-semibold text-sm">{type}</h3>
+                <p className="text-primary font-bold mt-1">+{points} pts</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── Rewards Preview ───────────────────────────────────── */}
-      <section className="py-24 max-w-6xl mx-auto px-4">
+      {/* ── Rewards Preview ───────────────────────────────────────── */}
+      <section className="py-24 max-w-6xl mx-auto px-4 md:px-8">
         <div className="text-center mb-16">
           <h2 className="section-title">Real Rewards</h2>
-          <p className="text-white/40">Redeem your eco points for tangible benefits</p>
+          <p className="text-on-surface-variant">Redeem your eco points for tangible benefits</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {(rewards.length > 0 ? rewards : [
             { id: '1', title: 'Amazon Gift Card ₹200', points_req: 500, icon: '🛍️', description: 'Digital gift card', stock: 50, is_active: true },
-            { id: '2', title: 'Eco Tote Bag', points_req: 300, icon: '👜', description: 'Reusable bag', stock: 100, is_active: true },
-            { id: '3', title: 'Certificate', points_req: 100, icon: '📜', description: 'PDF certificate', stock: -1, is_active: true },
-            { id: '4', title: 'Plant a Tree', points_req: 200, icon: '🌳', description: 'Via NGO partner', stock: 200, is_active: true },
-            { id: '5', title: 'Champion Badge', points_req: 800, icon: '👑', description: 'Homepage feature', stock: 10, is_active: true },
+            { id: '2', title: 'Eco Tote Bag',         points_req: 300, icon: '👜', description: 'Reusable bag',      stock: 100, is_active: true },
+            { id: '3', title: 'Certificate',          points_req: 100, icon: '📜', description: 'PDF certificate',  stock: -1,  is_active: true },
+            { id: '4', title: 'Plant a Tree',         points_req: 200, icon: '🌳', description: 'Via NGO partner',  stock: 200, is_active: true },
+            { id: '5', title: 'Champion Badge',       points_req: 800, icon: '👑', description: 'Homepage feature', stock: 10,  is_active: true },
           ]).map((r, i) => (
             <motion.div
               key={r.id}
@@ -279,61 +323,66 @@ export default function Landing() {
               className="glass-card-hover p-5 text-center"
             >
               <div className="text-4xl mb-3">{r.icon}</div>
-              <h3 className="text-white font-semibold text-sm">{r.title}</h3>
-              <p className="text-green-400 font-bold mt-2">{r.points_req} pts</p>
+              <h3 className="text-on-surface font-semibold text-sm">{r.title}</h3>
+              <p className="text-primary font-bold mt-2">{r.points_req} pts</p>
             </motion.div>
           ))}
         </div>
         <div className="text-center mt-8">
-          <Link to={user ? '/rewards' : '/'} onClick={!user ? signInWithGoogle : undefined} className="btn-secondary inline-flex items-center gap-2">
+          <Link
+            to={user ? '/rewards' : '/'}
+            onClick={!user ? signInWithGoogle : undefined}
+            className="btn-secondary inline-flex items-center gap-2"
+          >
             <Gift className="w-4 h-4" /> View All Rewards
           </Link>
         </div>
       </section>
 
-      {/* ── Impact Chart ─────────────────────────────────────── */}
-      <section className="py-24 bg-black/20">
-        <div className="max-w-6xl mx-auto px-4">
+      {/* ── Impact Chart ──────────────────────────────────────────── */}
+      <section className="py-24 bg-surface-container-low">
+        <div className="max-w-6xl mx-auto px-4 md:px-8">
           <div className="text-center mb-16">
             <h2 className="section-title">Growing Impact</h2>
-            <p className="text-white/40">Monthly eco actions across India</p>
+            <p className="text-on-surface-variant">Monthly eco actions across India</p>
           </div>
           <div className="glass-card p-6">
             <ResponsiveContainer width="100%" height={300}>
               <AreaChart data={monthlyData}>
                 <defs>
                   <linearGradient id="greenGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
+                    <stop offset="5%"  stopColor="#006e2f" stopOpacity={0.2} />
+                    <stop offset="95%" stopColor="#006e2f" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <Tooltip
-                  contentStyle={{ background: '#0a0f0a', border: '1px solid rgba(34,197,94,0.3)', borderRadius: '12px', color: '#fff' }}
-                  labelStyle={{ color: 'rgba(255,255,255,0.5)' }}
+                  contentStyle={{ background: '#ffffff', border: '1px solid #bccbb9', borderRadius: '12px', color: '#0b1c30', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
+                  labelStyle={{ color: '#3d4a3d' }}
                 />
-                <Area type="monotone" dataKey="activities" stroke="#22c55e" strokeWidth={2} fill="url(#greenGrad)" />
+                <Area type="monotone" dataKey="activities" stroke="#006e2f" strokeWidth={2} fill="url(#greenGrad)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
       </section>
 
-      {/* ── FAQ ──────────────────────────────────────────────── */}
-      <section className="py-24 max-w-3xl mx-auto px-4">
+      {/* ── FAQ ───────────────────────────────────────────────────── */}
+      <section className="py-24 max-w-3xl mx-auto px-4 md:px-8">
         <div className="text-center mb-16">
           <h2 className="section-title">Frequently Asked Questions</h2>
         </div>
         <FAQ />
       </section>
 
-      {/* ── CTA ──────────────────────────────────────────────── */}
-      <section className="py-24 max-w-6xl mx-auto px-4">
-        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-green-900/50 to-emerald-900/30 border border-green-500/20 p-12 text-center">
-          <div className="absolute inset-0 bg-grid opacity-20" />
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-32 bg-green-500/20 rounded-full blur-3xl" />
+      {/* ── CTA ───────────────────────────────────────────────────── */}
+      <section className="py-24 max-w-6xl mx-auto px-4 md:px-8">
+        <div className="relative rounded-3xl overflow-hidden border border-primary/15 p-12 text-center"
+          style={{ background: 'linear-gradient(135deg, rgba(0,110,47,0.06) 0%, rgba(0,108,73,0.03) 100%)' }}
+        >
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-32 bg-primary/10 rounded-full blur-3xl" />
           <div className="relative z-10">
-            <h2 className="text-4xl md:text-5xl font-black text-white mb-4">Ready to make an impact?</h2>
-            <p className="text-white/50 text-lg mb-8">Join 1,247+ Indians already earning rewards for going green</p>
+            <h2 className="text-4xl md:text-5xl font-black text-on-background mb-4 font-geist">Ready to make an impact?</h2>
+            <p className="text-on-surface-variant text-lg mb-8">Join 1,247+ Indians already earning rewards for going green</p>
             {user ? (
               <Link to="/upload" className="btn-primary text-lg px-10 py-4 inline-flex items-center gap-2">
                 Upload Your First Action <Leaf className="w-5 h-5" />
