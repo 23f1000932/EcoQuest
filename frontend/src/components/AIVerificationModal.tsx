@@ -17,60 +17,45 @@ export default function AIVerificationModal({ result, onClose }: Props) {
     if (result?.activity.status === 'approved' && !firedConfetti.current) {
       firedConfetti.current = true
       const end = Date.now() + 3000
-      const colors = ['#22c55e', '#10b981', '#4ade80', '#86efac']
+      const colors = ['#006e2f', '#22c55e', '#4ae176', '#6bff8f']
       const frame = () => {
-        confetti({
-          particleCount: 3,
-          angle: 60,
-          spread: 55,
-          origin: { x: 0 },
-          colors,
-        })
-        confetti({
-          particleCount: 3,
-          angle: 120,
-          spread: 55,
-          origin: { x: 1 },
-          colors,
-        })
+        confetti({ particleCount: 3, angle: 60,  spread: 55, origin: { x: 0 }, colors })
+        confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 }, colors })
         if (Date.now() < end) requestAnimationFrame(frame)
       }
       requestAnimationFrame(frame)
     }
   }, [result])
 
-  const activity = result?.activity
-  const aiResponse = activity?.ai_response
+  const activity    = result?.activity
+  const aiResponse  = activity?.ai_response
 
   const statusConfig = {
     approved: {
       icon: CheckCircle,
-      color: 'text-green-400',
-      bg: 'from-green-500/20 to-emerald-500/10',
-      border: 'border-green-500/40',
+      color: 'text-primary',
+      bg: 'bg-gradient-to-b from-primary/5 to-transparent',
+      border: 'border-primary/20',
       title: '🎉 Action Verified!',
-      subtitle: 'Points Awarded',
     },
     pending: {
       icon: Clock,
-      color: 'text-yellow-400',
-      bg: 'from-yellow-500/10 to-amber-500/5',
-      border: 'border-yellow-500/30',
+      color: 'text-yellow-600',
+      bg: 'bg-gradient-to-b from-yellow-500/5 to-transparent',
+      border: 'border-yellow-400/30',
       title: '⏳ Under Review',
-      subtitle: 'Pending Approval',
     },
     rejected: {
       icon: AlertTriangle,
-      color: 'text-red-400',
-      bg: 'from-red-500/10 to-rose-500/5',
-      border: 'border-red-500/30',
+      color: 'text-error',
+      bg: 'bg-gradient-to-b from-error/5 to-transparent',
+      border: 'border-error/20',
       title: '❌ Not Verified',
-      subtitle: 'Could not verify',
     },
   }
 
   const config = activity ? statusConfig[activity.status] : null
-  const icon = activity ? (ACTIVITY_ICONS[activity.activity_type] || '🌱') : '🌱'
+  const icon   = activity ? (ACTIVITY_ICONS[activity.activity_type] || '🌱') : '🌱'
 
   return (
     <AnimatePresence>
@@ -79,7 +64,7 @@ export default function AIVerificationModal({ result, onClose }: Props) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-on-background/60 backdrop-blur-sm"
           onClick={(e) => e.target === e.currentTarget && onClose()}
         >
           <motion.div
@@ -87,7 +72,7 @@ export default function AIVerificationModal({ result, onClose }: Props) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 100, scale: 0.9 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className={`w-full max-w-md rounded-3xl border bg-gradient-to-b ${config?.bg} ${config?.border} bg-[#0a0f0a] overflow-hidden`}
+            className={`w-full max-w-md rounded-3xl border ${config?.border} ${config?.bg} bg-surface-container-lowest overflow-hidden shadow-card-hover`}
           >
             {/* Header */}
             <div className="p-6 pb-4">
@@ -95,14 +80,14 @@ export default function AIVerificationModal({ result, onClose }: Props) {
                 <div className="flex items-center gap-3">
                   <div className="text-4xl">{icon}</div>
                   <div>
-                    <h2 className={`text-xl font-bold ${config?.color}`}>{config?.title}</h2>
-                    <p className="text-white/40 text-sm">{activity?.activity_type}</p>
+                    <h2 className={`text-xl font-bold font-geist ${config?.color}`}>{config?.title}</h2>
+                    <p className="text-on-surface-variant text-sm">{activity?.activity_type}</p>
                   </div>
                 </div>
                 <button
                   id="close-modal-btn"
                   onClick={onClose}
-                  className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/50 hover:text-white transition-all"
+                  className="p-2 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface transition-all"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -113,9 +98,8 @@ export default function AIVerificationModal({ result, onClose }: Props) {
             {aiResponse && (
               <div className="px-6 pb-4">
                 <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-1.5 text-white/50 text-xs">
-                    <Brain className="w-3.5 h-3.5" />
-                    AI Confidence
+                  <div className="flex items-center gap-1.5 text-on-surface-variant text-xs">
+                    <Brain className="w-3.5 h-3.5" /> AI Confidence
                   </div>
                   <span className={`text-sm font-bold ${config?.color}`}>{aiResponse.confidence}%</span>
                 </div>
@@ -128,27 +112,29 @@ export default function AIVerificationModal({ result, onClose }: Props) {
                   />
                 </div>
                 {aiResponse.reason && (
-                  <p className="text-white/40 text-xs mt-2 italic">"{aiResponse.reason}"</p>
+                  <p className="text-on-surface-variant text-xs mt-2 italic">"{aiResponse.reason}"</p>
                 )}
               </div>
             )}
 
-            {/* Stats */}
+            {/* Stats (approved only) */}
             {activity?.status === 'approved' && (
               <div className="px-6 pb-4 grid grid-cols-2 gap-3">
-                <div className="bg-green-500/10 border border-green-500/20 rounded-2xl p-4 text-center">
-                  <div className="flex items-center justify-center gap-1 text-green-400 mb-1">
+                <div className="bg-primary/10 border border-primary/20 rounded-2xl p-4 text-center">
+                  <div className="flex items-center justify-center gap-1 text-primary mb-1">
                     <Zap className="w-4 h-4" />
                     <span className="text-xs font-medium">Points</span>
                   </div>
-                  <p className="text-white text-2xl font-bold">+{activity.points_awarded}</p>
+                  <p className="text-on-background text-2xl font-bold">+{activity.points_awarded}</p>
                 </div>
-                <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-4 text-center">
-                  <div className="flex items-center justify-center gap-1 text-emerald-400 mb-1">
+                <div className="bg-secondary/10 border border-secondary/20 rounded-2xl p-4 text-center">
+                  <div className="flex items-center justify-center gap-1 text-secondary mb-1">
                     <Leaf className="w-4 h-4" />
                     <span className="text-xs font-medium">CO₂ Saved</span>
                   </div>
-                  <p className="text-white text-2xl font-bold">{activity.carbon_saved.toFixed(1)}<span className="text-sm font-normal text-white/40">kg</span></p>
+                  <p className="text-on-background text-2xl font-bold">
+                    {activity.carbon_saved.toFixed(1)}<span className="text-sm font-normal text-on-surface-variant">kg</span>
+                  </p>
                 </div>
               </div>
             )}
@@ -156,7 +142,7 @@ export default function AIVerificationModal({ result, onClose }: Props) {
             {/* Newly earned badges */}
             {result.badges_earned?.length > 0 && (
               <div className="px-6 pb-4">
-                <p className="text-white/50 text-xs font-medium mb-3">🏆 New Badges Unlocked!</p>
+                <p className="text-on-surface-variant text-xs font-medium mb-3">🏆 New Badges Unlocked!</p>
                 <div className="flex gap-3 flex-wrap">
                   {result.badges_earned.map(badge => (
                     <motion.div
@@ -164,12 +150,12 @@ export default function AIVerificationModal({ result, onClose }: Props) {
                       initial={{ scale: 0, rotate: -180 }}
                       animate={{ scale: 1, rotate: 0 }}
                       transition={{ type: 'spring', damping: 15 }}
-                      className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3 py-2"
+                      className="flex items-center gap-2 bg-surface-container border border-outline-variant rounded-xl px-3 py-2"
                     >
                       <span className="text-xl">{badge.icon}</span>
                       <div>
-                        <p className="text-white text-xs font-semibold">{badge.name}</p>
-                        <p className="text-green-400/60 text-xs">{badge.description}</p>
+                        <p className="text-on-surface text-xs font-semibold">{badge.name}</p>
+                        <p className="text-primary text-xs">{badge.description}</p>
                       </div>
                     </motion.div>
                   ))}
@@ -177,7 +163,7 @@ export default function AIVerificationModal({ result, onClose }: Props) {
               </div>
             )}
 
-            {/* Message */}
+            {/* Message + Done */}
             <div className="px-6 pb-6">
               <p className={`text-sm font-medium ${config?.color} mb-4`}>{result.message}</p>
               <button

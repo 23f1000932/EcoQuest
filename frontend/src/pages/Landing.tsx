@@ -5,11 +5,12 @@ import { AreaChart, Area, ResponsiveContainer, Tooltip } from 'recharts'
 import { useAuth } from '../hooks/useAuth'
 import { apiClient } from '../api/client'
 import type { ImpactStats, Reward } from '../types'
-import { ACTIVITY_ICONS } from '../types'
 import Footer from '../components/Footer'
 import {
-  Leaf, ArrowRight, Zap,
-  Camera, Shield, Trophy, Gift, ChevronDown, ChevronUp
+  Leaf, ArrowRight, Zap, Camera, Shield, Trophy, Gift,
+  ChevronDown, ChevronUp, TreePine, Recycle, Bike,
+  Bus, Droplets, ShoppingBag, Sparkles, Users, Wind,
+  CreditCard, Award, Star, TrendingUp
 } from 'lucide-react'
 
 // ── Animated Counter ──────────────────────────────────────────────
@@ -72,23 +73,97 @@ function FAQ() {
   )
 }
 
+// ── Challenge data with Lucide icons, descriptions, accent colors ──
 const challenges = [
-  { type: 'Tree Plantation', points: 100 },
-  { type: 'Community Cleanup', points: 80 },
-  { type: 'Cycling', points: 25 },
-  { type: 'Public Transport', points: 30 },
-  { type: 'Waste Segregation', points: 20 },
-  { type: 'Reusable Bottle', points: 10 },
-  { type: 'Cloth Bag', points: 10 },
-  { type: 'Other Eco Action', points: 15 },
+  {
+    type: 'Tree Plantation',
+    points: 100,
+    icon: TreePine,
+    desc: 'Plant native trees & saplings',
+    accent: 'bg-emerald-500/10 text-emerald-700 border-emerald-200',
+    iconBg: 'bg-gradient-to-br from-emerald-500 to-green-600',
+  },
+  {
+    type: 'Community Cleanup',
+    points: 80,
+    icon: Sparkles,
+    desc: 'Clean parks, beaches, streets',
+    accent: 'bg-blue-500/10 text-blue-700 border-blue-200',
+    iconBg: 'bg-gradient-to-br from-blue-500 to-cyan-600',
+  },
+  {
+    type: 'Cycling',
+    points: 25,
+    icon: Bike,
+    desc: 'Cycle instead of driving',
+    accent: 'bg-orange-500/10 text-orange-700 border-orange-200',
+    iconBg: 'bg-gradient-to-br from-orange-400 to-amber-500',
+  },
+  {
+    type: 'Public Transport',
+    points: 30,
+    icon: Bus,
+    desc: 'Use bus, metro, or train',
+    accent: 'bg-purple-500/10 text-purple-700 border-purple-200',
+    iconBg: 'bg-gradient-to-br from-purple-500 to-violet-600',
+  },
+  {
+    type: 'Waste Segregation',
+    points: 20,
+    icon: Recycle,
+    desc: 'Sort wet, dry & e-waste',
+    accent: 'bg-teal-500/10 text-teal-700 border-teal-200',
+    iconBg: 'bg-gradient-to-br from-teal-500 to-emerald-600',
+  },
+  {
+    type: 'Reusable Bottle',
+    points: 10,
+    icon: Droplets,
+    desc: 'Ditch single-use plastics',
+    accent: 'bg-sky-500/10 text-sky-700 border-sky-200',
+    iconBg: 'bg-gradient-to-br from-sky-400 to-blue-500',
+  },
+  {
+    type: 'Cloth Bag',
+    points: 10,
+    icon: ShoppingBag,
+    desc: 'Carry reusable bags daily',
+    accent: 'bg-rose-500/10 text-rose-700 border-rose-200',
+    iconBg: 'bg-gradient-to-br from-rose-400 to-pink-500',
+  },
+  {
+    type: 'Other Eco Action',
+    points: 15,
+    icon: Leaf,
+    desc: 'Any verified green action',
+    accent: 'bg-green-500/10 text-green-700 border-green-200',
+    iconBg: 'bg-gradient-to-br from-green-500 to-primary',
+  },
+]
+
+// ── Stats data with Lucide icons ──────────────────────────────────
+const statItems = [
+  { icon: Users,    label: 'Users Joined',    suffix: '+', key: 'total_users',         fallback: 1247,  iconBg: 'bg-primary/10 text-primary'     },
+  { icon: TreePine, label: 'Trees Planted',   suffix: '+', key: 'trees_planted',       fallback: 3211,  iconBg: 'bg-emerald-500/10 text-emerald-700' },
+  { icon: Zap,      label: 'Actions Logged',  suffix: '+', key: 'total_activities',    fallback: 8934,  iconBg: 'bg-amber-500/10 text-amber-600'  },
+  { icon: Wind,     label: 'CO₂ Saved (kg)',  suffix: 'kg',key: 'total_carbon_saved',  fallback: 42180, iconBg: 'bg-sky-500/10 text-sky-600'      },
+]
+
+// ── Default rewards with Lucide icons ────────────────────────────
+const defaultRewards = [
+  { id: '1', Icon: CreditCard, title: 'Amazon Gift Card ₹200', points_req: 500, description: 'Digital gift card', iconBg: 'bg-gradient-to-br from-amber-400 to-orange-500' },
+  { id: '2', Icon: ShoppingBag, title: 'Eco Tote Bag',         points_req: 300, description: 'Reusable cotton bag', iconBg: 'bg-gradient-to-br from-teal-400 to-emerald-600' },
+  { id: '3', Icon: Award,       title: 'Certificate',          points_req: 100, description: 'PDF eco certificate', iconBg: 'bg-gradient-to-br from-blue-400 to-indigo-600' },
+  { id: '4', Icon: TreePine,    title: 'Plant a Tree',         points_req: 200, description: 'Via NGO partner',     iconBg: 'bg-gradient-to-br from-green-500 to-emerald-700' },
+  { id: '5', Icon: Star,        title: 'Champion Badge',       points_req: 800, description: 'Featured on homepage',iconBg: 'bg-gradient-to-br from-purple-500 to-violet-700' },
 ]
 
 const steps = [
-  { num: 1, icon: Camera, title: 'Do an eco action', desc: 'Plant a tree, cycle to work, clean your neighborhood.' },
-  { num: 2, icon: Leaf, title: 'Upload your proof', desc: 'Take a photo and upload it to EcoQuest.' },
-  { num: 3, icon: Shield, title: 'AI verifies it', desc: 'Gemini Vision AI checks authenticity in seconds.' },
-  { num: 4, icon: Zap, title: 'Earn points', desc: 'Points are instantly awarded to your account.' },
-  { num: 5, icon: Trophy, title: 'Win rewards', desc: 'Climb leaderboards and unlock real rewards.' },
+  { num: 1, icon: Camera,   title: 'Do an eco action',  desc: 'Plant a tree, cycle to work, clean your neighborhood.' },
+  { num: 2, icon: Leaf,     title: 'Upload your proof', desc: 'Take a photo and upload it to EcoQuest.' },
+  { num: 3, icon: Shield,   title: 'AI verifies it',    desc: 'Gemini Vision AI checks authenticity in seconds.' },
+  { num: 4, icon: Zap,      title: 'Earn points',       desc: 'Points are instantly awarded to your account.' },
+  { num: 5, icon: Trophy,   title: 'Win rewards',       desc: 'Climb leaderboards and unlock real rewards.' },
 ]
 
 const monthlyData = [
@@ -112,9 +187,7 @@ export default function Landing() {
     <div className="min-h-screen bg-background">
       {/* ── Hero ──────────────────────────────────────────────────── */}
       <section className="relative pt-32 pb-24 md:pt-48 md:pb-32 px-4 md:px-20 overflow-hidden">
-        {/* Light gradient overlay */}
         <div className="absolute inset-0 hero-gradient opacity-10 -z-10" />
-        {/* Floating blobs */}
         <div className="absolute top-20 left-10 w-64 h-64 bg-primary-container/40 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-float" />
         <div className="absolute top-40 right-20 w-72 h-72 bg-secondary-container/40 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float-delayed" />
 
@@ -165,55 +238,71 @@ export default function Landing() {
 
           {/* Right — floating bento cards */}
           <div className="relative h-96 hidden lg:block">
-            {/* Card 1 */}
+            {/* Activity notification card */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="absolute top-8 right-8 w-60 glass-card p-4 animate-float"
+              className="absolute top-8 right-8 w-64 glass-card p-4 animate-float"
             >
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center text-primary">
-                  <Leaf className="w-5 h-5" />
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center flex-shrink-0">
+                  <TreePine className="w-5 h-5 text-white" />
                 </div>
                 <div>
                   <p className="text-on-surface font-semibold text-sm">Tree Planted</p>
-                  <p className="text-on-surface-variant text-xs">Just now</p>
+                  <p className="text-on-surface-variant text-xs">AI verified · Just now</p>
                 </div>
+                <div className="ml-auto text-primary font-bold text-sm">+100</div>
               </div>
-              <div className="h-2 w-full bg-surface-container rounded-full overflow-hidden">
-                <div className="h-full bg-primary w-3/4 rounded-full" />
+              <div className="h-1.5 w-full bg-surface-container rounded-full overflow-hidden">
+                <motion.div
+                  className="h-full bg-primary rounded-full"
+                  initial={{ width: 0 }}
+                  animate={{ width: '74%' }}
+                  transition={{ delay: 0.8, duration: 1 }}
+                />
               </div>
+              <p className="text-on-surface-variant text-xs mt-1">740 / 1000 pts to Level 4</p>
             </motion.div>
 
-            {/* Card 2 */}
+            {/* User activity card */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
-              className="absolute bottom-16 left-0 w-68 glass-surface rounded-xl p-4 animate-float-delayed shadow-card"
+              className="absolute bottom-16 left-0 glass-surface rounded-xl p-4 animate-float-delayed shadow-card w-64"
             >
               <div className="flex items-center gap-3">
-                <div className="w-14 h-14 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-2xl flex-shrink-0">
-                  🌱
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 border border-outline-variant flex items-center justify-center flex-shrink-0">
+                  <Recycle className="w-6 h-6 text-secondary" />
                 </div>
-                <div>
+                <div className="flex-1 min-w-0">
                   <p className="text-on-surface font-semibold text-sm">Priya S.</p>
-                  <p className="text-on-surface-variant text-xs mb-1.5">Logged: Zero Waste Day</p>
-                  <div className="inline-flex items-center gap-1 bg-secondary-container/40 text-on-secondary-container px-2 py-0.5 rounded-full text-xs font-bold">
-                    ⭐ +50 Pts
+                  <p className="text-on-surface-variant text-xs mb-1.5">Zero Waste Day logged</p>
+                  <div className="inline-flex items-center gap-1 bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 rounded-full text-xs font-bold">
+                    <Zap className="w-3 h-3" /> +50 pts
                   </div>
                 </div>
               </div>
             </motion.div>
 
-            {/* Floating icon */}
+            {/* Floating icon — Bike */}
             <motion.div
               animate={{ y: [0, -8, 0] }}
               transition={{ duration: 3, repeat: Infinity, delay: 1 }}
-              className="absolute top-1/2 left-1/4 w-12 h-12 bg-tertiary-container/60 rounded-full flex items-center justify-center shadow-card"
+              className="absolute top-1/2 left-1/4 w-12 h-12 bg-gradient-to-br from-orange-400 to-amber-500 rounded-xl flex items-center justify-center shadow-card"
             >
-              <span className="text-xl">🚴</span>
+              <Bike className="w-6 h-6 text-white" />
+            </motion.div>
+
+            {/* Floating icon — TrendingUp */}
+            <motion.div
+              animate={{ y: [0, 6, 0] }}
+              transition={{ duration: 4, repeat: Infinity, delay: 0.5 }}
+              className="absolute top-12 left-1/3 w-10 h-10 bg-gradient-to-br from-purple-400 to-violet-500 rounded-xl flex items-center justify-center shadow-card"
+            >
+              <TrendingUp className="w-5 h-5 text-white" />
             </motion.div>
           </div>
         </div>
@@ -223,21 +312,24 @@ export default function Landing() {
       <section className="py-14 bg-surface-container-low border-y border-outline-variant/30">
         <div className="max-w-6xl mx-auto px-4 md:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {[
-              { icon: '👥', label: 'Users Joined',    value: impact?.total_users || 1247,    suffix: '+' },
-              { icon: '🌳', label: 'Trees Planted',   value: impact?.trees_planted || 3211,   suffix: '+' },
-              { icon: '⚡', label: 'Actions Logged',  value: impact?.total_activities || 8934, suffix: '+' },
-              { icon: '💨', label: 'CO₂ Saved (kg)',  value: impact ? Math.round(impact.total_carbon_saved) : 42180, suffix: 'kg' },
-            ].map(({ icon, label, value, suffix }) => (
-              <div key={label} className="text-center">
-                <div className="text-3xl mb-2">{icon}</div>
-                <div className="text-on-background text-3xl md:text-4xl font-black font-geist">
-                  <AnimatedCounter end={value} />
-                  <span className="text-primary">{suffix}</span>
+            {statItems.map(({ icon: Icon, label, suffix, key, fallback, iconBg }) => {
+              const raw = impact ? (impact as any)[key] : fallback
+              const value = key === 'total_carbon_saved' && impact
+                ? Math.round(impact.total_carbon_saved)
+                : (raw ?? fallback)
+              return (
+                <div key={label} className="text-center">
+                  <div className={`w-12 h-12 rounded-xl ${iconBg} mx-auto mb-3 flex items-center justify-center`}>
+                    <Icon className="w-6 h-6" />
+                  </div>
+                  <div className="text-on-background text-3xl md:text-4xl font-black font-geist">
+                    <AnimatedCounter end={value} />
+                    <span className="text-primary">{suffix}</span>
+                  </div>
+                  <p className="text-on-surface-variant text-sm mt-1">{label}</p>
                 </div>
-                <p className="text-on-surface-variant text-sm mt-1">{label}</p>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </div>
       </section>
@@ -279,21 +371,42 @@ export default function Landing() {
         <div className="max-w-6xl mx-auto px-4 md:px-8">
           <div className="text-center mb-16">
             <h2 className="section-title">Eco Challenges</h2>
-            <p className="text-on-surface-variant">Eight categories of verified eco-friendly actions</p>
+            <p className="text-on-surface-variant">Eight categories of AI-verified eco-friendly actions</p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {challenges.map(({ type, points }, i) => (
+            {challenges.map(({ type, points, icon: Icon, desc, accent, iconBg }, i) => (
               <motion.div
                 key={type}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.08 }}
-                className="glass-card-hover p-5"
+                transition={{ delay: i * 0.07, duration: 0.4 }}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                className="group relative bg-surface-container-lowest border border-outline-variant rounded-2xl p-5 cursor-default overflow-hidden
+                  hover:border-transparent hover:shadow-card-hover transition-all duration-300"
               >
-                <div className="text-3xl mb-3">{ACTIVITY_ICONS[type] || '🌱'}</div>
-                <h3 className="text-on-surface font-semibold text-sm">{type}</h3>
-                <p className="text-primary font-bold mt-1">+{points} pts</p>
+                {/* Hover shimmer border */}
+                <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  style={{ background: 'linear-gradient(135deg, rgba(0,110,47,0.08) 0%, rgba(0,108,73,0.04) 100%)' }}
+                />
+                <div className="relative z-10">
+                  {/* Icon container */}
+                  <div className={`w-12 h-12 rounded-xl ${iconBg} flex items-center justify-center mb-4 shadow-sm group-hover:scale-110 transition-transform duration-300`}>
+                    <Icon className="w-6 h-6 text-white" />
+                  </div>
+
+                  {/* Title */}
+                  <h3 className="text-on-surface font-semibold text-sm leading-tight mb-1">{type}</h3>
+
+                  {/* Description */}
+                  <p className="text-on-surface-variant text-xs mb-3 leading-relaxed">{desc}</p>
+
+                  {/* Points badge */}
+                  <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs font-bold ${accent}`}>
+                    <Zap className="w-3 h-3" />
+                    +{points} pts
+                  </div>
+                </div>
               </motion.div>
             ))}
           </div>
@@ -307,24 +420,33 @@ export default function Landing() {
           <p className="text-on-surface-variant">Redeem your eco points for tangible benefits</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {(rewards.length > 0 ? rewards : [
-            { id: '1', title: 'Amazon Gift Card ₹200', points_req: 500, icon: '🛍️', description: 'Digital gift card', stock: 50, is_active: true },
-            { id: '2', title: 'Eco Tote Bag',         points_req: 300, icon: '👜', description: 'Reusable bag',      stock: 100, is_active: true },
-            { id: '3', title: 'Certificate',          points_req: 100, icon: '📜', description: 'PDF certificate',  stock: -1,  is_active: true },
-            { id: '4', title: 'Plant a Tree',         points_req: 200, icon: '🌳', description: 'Via NGO partner',  stock: 200, is_active: true },
-            { id: '5', title: 'Champion Badge',       points_req: 800, icon: '👑', description: 'Homepage feature', stock: 10,  is_active: true },
-          ]).map((r, i) => (
+          {(rewards.length > 0
+            ? rewards.map((r, i) => ({ ...defaultRewards[i % defaultRewards.length], title: r.title, points_req: r.points_req }))
+            : defaultRewards
+          ).map(({ id, Icon, title, points_req, description, iconBg }, i) => (
             <motion.div
-              key={r.id}
+              key={id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="glass-card-hover p-5 text-center"
+              whileHover={{ y: -4, transition: { duration: 0.2 } }}
+              className="group bg-surface-container-lowest border border-outline-variant rounded-2xl p-5 text-center
+                hover:border-transparent hover:shadow-card-hover transition-all duration-300 cursor-default overflow-hidden relative"
             >
-              <div className="text-4xl mb-3">{r.icon}</div>
-              <h3 className="text-on-surface font-semibold text-sm">{r.title}</h3>
-              <p className="text-primary font-bold mt-2">{r.points_req} pts</p>
+              <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                style={{ background: 'linear-gradient(135deg, rgba(0,110,47,0.05) 0%, transparent 100%)' }}
+              />
+              <div className="relative z-10">
+                <div className={`w-14 h-14 rounded-xl ${iconBg} flex items-center justify-center mx-auto mb-3 shadow-sm group-hover:scale-110 transition-transform duration-300`}>
+                  <Icon className="w-7 h-7 text-white" />
+                </div>
+                <h3 className="text-on-surface font-semibold text-sm leading-tight">{title}</h3>
+                <p className="text-on-surface-variant text-xs mt-1 mb-2">{description}</p>
+                <span className="inline-flex items-center gap-1 bg-primary/10 text-primary border border-primary/20 px-2.5 py-0.5 rounded-full text-xs font-bold">
+                  <Zap className="w-3 h-3" />{points_req} pts
+                </span>
+              </div>
             </motion.div>
           ))}
         </div>
@@ -344,7 +466,7 @@ export default function Landing() {
         <div className="max-w-6xl mx-auto px-4 md:px-8">
           <div className="text-center mb-16">
             <h2 className="section-title">Growing Impact</h2>
-            <p className="text-on-surface-variant">Monthly eco actions across India</p>
+            <p className="text-on-surface-variant">Monthly eco actions logged across India</p>
           </div>
           <div className="glass-card p-6">
             <ResponsiveContainer width="100%" height={300}>
