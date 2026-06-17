@@ -35,6 +35,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error('Backend verification failed:', error)
       setUser(null)
       setAuthToken(null)
+      // Clear the stale Supabase session so we don't loop on next page load
+      await supabase.auth.signOut()
     }
   }, [])
 

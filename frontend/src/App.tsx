@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import { useAuth } from './hooks/useAuth'
 import Navbar from './components/Navbar'
@@ -31,6 +31,10 @@ export default function App() {
         <Route path="/rewards" element={<ProtectedRoute><Rewards /></ProtectedRoute>} />
         <Route path="/impact" element={<ProtectedRoute><Impact /></ProtectedRoute>} />
         <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
+        {/* /activities redirects to /profile which shows the activity history */}
+        <Route path="/activities" element={<Navigate to="/profile" replace />} />
+        {/* Catch-all: redirect unknown routes to landing */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <Toaster
         position="top-right"

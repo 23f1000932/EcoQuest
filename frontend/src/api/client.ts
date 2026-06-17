@@ -31,8 +31,13 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      setAuthToken(null)
-      window.location.href = '/'
+      const url: string = error.config?.url ?? ''
+      // Don't redirect on /auth/verify 401 — that would cause an infinite loop
+      // where the failed verify triggers a page reload which re-runs verify again
+      if (!url.includes('/auth/verify')) {
+        setAuthToken(null)
+        window.location.href = '/'
+      }
     }
     return Promise.reject(error)
   }

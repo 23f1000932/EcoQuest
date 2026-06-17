@@ -59,6 +59,8 @@ def decode_supabase_token(token: str) -> dict:
         try:
             return jwt.decode(
                 token,
+                key="",
+                algorithms=["HS256"],
                 options={"verify_signature": False, "verify_aud": False},
             )
         except Exception:
