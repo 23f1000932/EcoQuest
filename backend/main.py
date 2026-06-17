@@ -17,9 +17,22 @@ app = FastAPI(
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
+def _get_cors_origins() -> list[str]:
+    origins = settings.cors_origins_list
+    if settings.ENVIRONMENT == "development":
+        # Allow all localhost ports so Vite port switching (5173, 5174…) never breaks auth
+        origins = list(set(origins + [
+            "http://localhost:5173",
+            "http://localhost:5174",
+            "http://localhost:5175",
+            "http://127.0.0.1:5173",
+            "http://127.0.0.1:5174",
+        ]))
+    return origins
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.cors_origins_list,
+    allow_origins=_get_cors_origins(),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

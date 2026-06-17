@@ -52,6 +52,48 @@ If the image is unclear, blurry, or irrelevant, return confidence below 30.
 Do not award points for screenshots, memes, or computer-generated images."""
 
 
+async def verify_image_bytes(image_bytes: bytes, content_type: str = "image/jpeg") -> dict:
+    """Send raw image bytes to Gemini Vision — no URL fetching needed."""
+    if not settings.GEMINI_API_KEY:
+        return {
+            "activity": "Tree Plantation",
+            "confidence": 85,
+            "points": 100,
+            "carbon_saved": 20.0,
+            "reason": "Demo mode: Gemini API key not configured.",
+        }
+
+    import base64, json
+    image_b64 = base64.b64encode(image_bytes).decode()
+    payload = {
+        "contents": [{"parts": [
+            {"text": SYSTEM_PROMPT},
+            {"inline_data": {"mime_type": content_type, "data": image_b64}},
+        ]}],
+        "generationConfig": {"temperature": 0.1, "maxOutputTokens": 256},
+    }
+    async with httpx.AsyncClient(timeout=30.0) as client:
+        response = await client.post(
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent",
+            params={"key": settings.GEMINI_API_KEY},
+            json=payload,
+        )
+        response.raise_for_status()
+        data = response.json()
+        text = data["candidates"][0]["content"]["parts"][0]["text"].strip()
+        if text.startswith("```"):
+            text = text.split("```")[1]
+            if text.startswith("json"):
+                text = text[4:]
+        text = text.strip()
+        result = json.loads(text)
+        result["confidence"] = max(0, min(100, int(result.get("confidence", 0))))
+        detected = result.get("activity", "Other Eco Action")
+        result["points"] = ACTIVITY_POINT_MAP.get(detected, 15)
+        result["carbon_saved"] = float(result.get("carbon_saved", CARBON_SAVINGS_MAP.get(detected, 1.0)))
+        return result
+
+
 async def verify_image(image_url: str) -> dict:
     """Send image to Gemini Vision and return structured verification result."""
     if not settings.GEMINI_API_KEY:

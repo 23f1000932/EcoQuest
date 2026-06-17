@@ -5,7 +5,7 @@ from database import get_db
 from models import User, Activity, Badge, UserBadge, PlatformStats, ActivityStatus
 from schemas import ActivitySchema, ActivityListResponse, UploadResponse, BadgeSchema
 from auth import get_current_user
-from ai_verifier import verify_image
+from ai_verifier import verify_image_bytes
 from anti_cheat import compute_phash, is_duplicate
 from config import settings
 from slowapi import Limiter
@@ -114,8 +114,8 @@ async def upload_activity(
     if is_duplicate(image_hash, existing_hashes):
         raise HTTPException(status_code=409, detail="This image was already submitted")
 
-    # Upload to Supabase Storage or use a placeholder URL for dev
-    image_url = f"https://placeholder.ecoquest.in/images/{uuid.uuid4()}.jpg"
+    # Try to upload to Supabase Storage for persistent image URLs
+    image_url = f"local://{uuid.uuid4()}"
     if settings.SUPABASE_URL and settings.SUPABASE_SERVICE_ROLE_KEY:
         try:
             from supabase import create_client
@@ -127,12 +127,11 @@ async def upload_activity(
                 file_options={"content-type": image.content_type},
             )
             image_url = f"{settings.SUPABASE_URL}/storage/v1/object/public/activity-images/{file_path}"
-        except Exception as e:
-            # Fall back to placeholder if Supabase not configured
-            pass
+        except Exception:
+            pass  # Image stored locally; URL is a placeholder
 
-    # AI Verification
-    ai_result = await verify_image(image_url)
+    # AI Verification — pass raw bytes so Gemini can analyze even without storage URL
+    ai_result = await verify_image_bytes(image_bytes, image.content_type or "image/jpeg")
 
     confidence = float(ai_result.get("confidence", 0))
     activity_type = ai_result.get("activity", "Other Eco Action")

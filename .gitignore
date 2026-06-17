@@ -1,0 +1,101 @@
+# =============================================================================
+# EcoQuest — Root .gitignore
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# 🔑 SECRETS & ENVIRONMENT VARIABLES — never commit these
+# -----------------------------------------------------------------------------
+.env
+.env.*
+!.env.example          # keep the example template
+
+# -----------------------------------------------------------------------------
+# 🐍 Python / Backend
+# -----------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Distribution / packaging
+*.egg-info/
+dist/
+build/
+*.egg
+
+# SQLite databases (contain real user data)
+*.db
+*.sqlite
+*.sqlite3
+
+# pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+*.junit.xml
+
+# mypy / type-checkers
+.mypy_cache/
+.dmypy.json
+
+# Logs
+*.log
+logs/
+
+# -----------------------------------------------------------------------------
+# 🌐 Node / Frontend
+# -----------------------------------------------------------------------------
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Vite build cache
+.vite/
+
+# package manager locks (keep package-lock.json, ignore yarn/pnpm)
+yarn.lock
+pnpm-lock.yaml
+
+# -----------------------------------------------------------------------------
+# 🐳 Docker
+# -----------------------------------------------------------------------------
+# Don't commit any override compose files that may have secrets
+docker-compose.override.yml
+
+# -----------------------------------------------------------------------------
+# 🖥️ OS & Editor artefacts
+# -----------------------------------------------------------------------------
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# VS Code (keep shared settings but not personal)
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# JetBrains IDEs
+.idea/
+*.iml
+
+# Misc
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.swp

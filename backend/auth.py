@@ -26,20 +26,45 @@ def decode_app_token(token: str) -> dict:
 
 
 def decode_supabase_token(token: str) -> dict:
-    """Decode Supabase JWT using the shared JWT secret."""
+    """Decode Supabase JWT using the shared JWT secret.
+
+    Supabase JWT secrets are base64url-encoded strings. We try:
+      1. The raw secret string (as-is, after stripping accidental quotes).
+      2. The base64url-decoded bytes (what Supabase actually signs with).
+      3. Dev-only: skip signature verification entirely.
+    """
+    import base64
+
+    # Strip surrounding quotes that some env loaders may preserve
+    secret = settings.SUPABASE_JWT_SECRET.strip().strip('"').strip("'")
+    decode_opts = {"verify_aud": False}
+
+    # 1. Try raw secret string
     try:
-        payload = jwt.decode(
-            token,
-            settings.SUPABASE_JWT_SECRET,
-            algorithms=["HS256"],
-            options={"verify_aud": False},
-        )
-        return payload
+        return jwt.decode(token, secret, algorithms=["HS256"], options=decode_opts)
     except JWTError:
-        # Fallback: try without verification for dev mode
-        if settings.ENVIRONMENT == "development" and not settings.SUPABASE_JWT_SECRET:
-            return jwt.decode(token, options={"verify_signature": False})
-        raise
+        pass
+
+    # 2. Try base64url-decoded bytes (Supabase signs with decoded bytes)
+    try:
+        # Fix padding: base64 needs length % 4 == 0
+        padded = secret + "=" * (-len(secret) % 4)
+        secret_bytes = base64.urlsafe_b64decode(padded)
+        return jwt.decode(token, secret_bytes, algorithms=["HS256"], options=decode_opts)
+    except Exception:
+        pass
+
+    # 3. Dev fallback: skip signature verification entirely
+    if settings.ENVIRONMENT == "development":
+        try:
+            return jwt.decode(
+                token,
+                options={"verify_signature": False, "verify_aud": False},
+            )
+        except Exception:
+            pass
+
+    raise JWTError("Could not verify Supabase token")
 
 
 async def get_current_user(

@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import { useAuth } from './hooks/useAuth'
 import Navbar from './components/Navbar'
+import AuthModal from './components/AuthModal'
 import { ProtectedRoute, AdminRoute } from './components/ProtectedRoute'
 import Landing from './pages/Landing'
 import Dashboard from './pages/Dashboard'
@@ -20,6 +21,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-background text-on-background">
       <Navbar />
+      <AuthModal />
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

@@ -174,7 +174,7 @@ const monthlyData = [
 ]
 
 export default function Landing() {
-  const { user, signInWithGoogle } = useAuth()
+  const { user, openAuthModal } = useAuth()
   const [impact, setImpact] = useState<ImpactStats | null>(null)
   const [rewards, setRewards] = useState<Reward[]>([])
 
@@ -223,7 +223,7 @@ export default function Landing() {
                 <>
                   <button
                     id="hero-join-btn"
-                    onClick={signInWithGoogle}
+                    onClick={openAuthModal}
                     className="btn-primary text-base px-8 py-3.5 flex items-center gap-2 justify-center"
                   >
                     Join Challenge <ArrowRight className="w-5 h-5" />
@@ -453,7 +453,7 @@ export default function Landing() {
         <div className="text-center mt-8">
           <Link
             to={user ? '/rewards' : '/'}
-            onClick={!user ? signInWithGoogle : undefined}
+            onClick={!user ? openAuthModal : undefined}
             className="btn-secondary inline-flex items-center gap-2"
           >
             <Gift className="w-4 h-4" /> View All Rewards
@@ -512,7 +512,7 @@ export default function Landing() {
             ) : (
               <button
                 id="cta-join-btn"
-                onClick={signInWithGoogle}
+                onClick={openAuthModal}
                 className="btn-primary text-lg px-10 py-4 inline-flex items-center gap-2"
               >
                 Start for Free <ArrowRight className="w-5 h-5" />
