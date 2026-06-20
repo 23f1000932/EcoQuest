@@ -23,7 +23,7 @@ class Settings(BaseSettings):
 
     @property
     def cors_origins_list(self) -> List[str]:
-        return [o.strip() for o in self.CORS_ORIGINS.split(",")]
+        return [o.strip().rstrip('/') for o in self.CORS_ORIGINS.split(",")]
 
     class Config:
         env_file = ".env"
