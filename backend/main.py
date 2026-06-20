@@ -19,6 +19,7 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 def _get_cors_origins() -> list[str]:
     origins = settings.cors_origins_list
+    origins.append("https://ecoquest-india.vercel.app")
     if settings.ENVIRONMENT == "development":
         # Allow all localhost ports so Vite port switching (5173, 5174…) never breaks auth
         origins = list(set(origins + [
