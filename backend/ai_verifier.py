@@ -54,13 +54,15 @@ Do not award points for screenshots, memes, or computer-generated images."""
 
 async def verify_image_bytes(image_bytes: bytes, content_type: str = "image/jpeg") -> dict:
     """Send raw image bytes to Gemini Vision — no URL fetching needed."""
-    if not settings.GEMINI_API_KEY:
+    # A valid Gemini key starts with "AIza" — anything else skips the API call
+    key = settings.GEMINI_API_KEY or ""
+    if not key or not key.startswith("AIza"):
         return {
-            "activity": "Tree Plantation",
-            "confidence": 85,
-            "points": 100,
-            "carbon_saved": 20.0,
-            "reason": "Demo mode: Gemini API key not configured.",
+            "activity": "Other Eco Action",
+            "confidence": 60,
+            "points": 15,
+            "carbon_saved": 1.0,
+            "reason": "AI verification running in demo mode (no valid Gemini key). Auto-approved for testing.",
         }
 
     import base64, json
@@ -72,88 +74,135 @@ async def verify_image_bytes(image_bytes: bytes, content_type: str = "image/jpeg
         ]}],
         "generationConfig": {"temperature": 0.1, "maxOutputTokens": 256},
     }
-    async with httpx.AsyncClient(timeout=30.0) as client:
-        response = await client.post(
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent",
-            params={"key": settings.GEMINI_API_KEY},
-            json=payload,
-        )
-        response.raise_for_status()
-        data = response.json()
-        text = data["candidates"][0]["content"]["parts"][0]["text"].strip()
-        if text.startswith("```"):
-            text = text.split("```")[1]
-            if text.startswith("json"):
-                text = text[4:]
-        text = text.strip()
-        result = json.loads(text)
-        result["confidence"] = max(0, min(100, int(result.get("confidence", 0))))
-        detected = result.get("activity", "Other Eco Action")
-        result["points"] = ACTIVITY_POINT_MAP.get(detected, 15)
-        result["carbon_saved"] = float(result.get("carbon_saved", CARBON_SAVINGS_MAP.get(detected, 1.0)))
-        return result
+
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.post(
+                # gemini-2.5-flash — latest stable model
+                "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+                params={"key": settings.GEMINI_API_KEY},
+                json=payload,
+            )
+            response.raise_for_status()
+            data = response.json()
+            text = data["candidates"][0]["content"]["parts"][0]["text"].strip()
+            if text.startswith("```"):
+                text = text.split("```")[1]
+                if text.startswith("json"):
+                    text = text[4:]
+            text = text.strip()
+            result = json.loads(text)
+            result["confidence"] = max(0, min(100, int(result.get("confidence", 0))))
+            detected = result.get("activity", "Other Eco Action")
+            result["points"] = ACTIVITY_POINT_MAP.get(detected, 15)
+            result["carbon_saved"] = float(result.get("carbon_saved", CARBON_SAVINGS_MAP.get(detected, 1.0)))
+            return result
+
+    except httpx.HTTPStatusError as e:
+        # Gemini API returned an error (invalid key, quota exceeded, model not found, etc.)
+        import logging
+        logging.warning(f"Gemini API error {e.response.status_code}: {e.response.text[:200]}")
+        return {
+            "activity": "Other Eco Action",
+            "confidence": 55,
+            "points": 15,
+            "carbon_saved": 1.0,
+            "reason": f"AI verification unavailable (API error {e.response.status_code}). Activity queued for manual review.",
+        }
+    except Exception as e:
+        import logging
+        logging.warning(f"Gemini verification failed: {e}")
+        return {
+            "activity": "Other Eco Action",
+            "confidence": 55,
+            "points": 15,
+            "carbon_saved": 1.0,
+            "reason": "AI verification unavailable. Activity queued for manual review.",
+        }
 
 
 async def verify_image(image_url: str) -> dict:
     """Send image to Gemini Vision and return structured verification result."""
-    if not settings.GEMINI_API_KEY:
-        # Demo mode: return a mock response
+    key = settings.GEMINI_API_KEY or ""
+    if not key or not key.startswith("AIza"):
         return {
-            "activity": "Tree Plantation",
-            "confidence": 85,
-            "points": 100,
-            "carbon_saved": 20.0,
-            "reason": "Demo mode: Gemini API key not configured. Image appears to show a tree planting activity.",
+            "activity": "Other Eco Action",
+            "confidence": 60,
+            "points": 15,
+            "carbon_saved": 1.0,
+            "reason": "AI verification running in demo mode (no valid Gemini key). Auto-approved for testing.",
         }
 
-    async with httpx.AsyncClient(timeout=30.0) as client:
-        image_b64 = await _fetch_image_base64(client, image_url)
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            image_b64 = await _fetch_image_base64(client, image_url)
 
-        payload = {
-            "contents": [
-                {
-                    "parts": [
-                        {"text": SYSTEM_PROMPT},
-                        {
-                            "inline_data": {
-                                "mime_type": "image/jpeg",
-                                "data": image_b64,
-                            }
-                        },
-                    ]
-                }
-            ],
-            "generationConfig": {
-                "temperature": 0.1,
-                "maxOutputTokens": 256,
-            },
+            payload = {
+                "contents": [
+                    {
+                        "parts": [
+                            {"text": SYSTEM_PROMPT},
+                            {
+                                "inline_data": {
+                                    "mime_type": "image/jpeg",
+                                    "data": image_b64,
+                                }
+                            },
+                        ]
+                    }
+                ],
+                "generationConfig": {
+                    "temperature": 0.1,
+                    "maxOutputTokens": 256,
+                },
+            }
+
+            response = await client.post(
+                "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+                params={"key": settings.GEMINI_API_KEY},
+                json=payload,
+            )
+            response.raise_for_status()
+            data = response.json()
+
+            text = data["candidates"][0]["content"]["parts"][0]["text"].strip()
+            # Strip markdown code fences if present
+            if text.startswith("```"):
+                text = text.split("```")[1]
+                if text.startswith("json"):
+                    text = text[4:]
+            text = text.strip()
+
+            result = json.loads(text)
+
+            # Clamp and validate
+            result["confidence"] = max(0, min(100, int(result.get("confidence", 0))))
+            # Use our point map for consistency
+            detected_activity = result.get("activity", "Other Eco Action")
+            result["points"] = ACTIVITY_POINT_MAP.get(detected_activity, 15)
+            result["carbon_saved"] = float(result.get("carbon_saved", CARBON_SAVINGS_MAP.get(detected_activity, 1.0)))
+            return result
+
+    except httpx.HTTPStatusError as e:
+        import logging
+        logging.warning(f"Gemini API error {e.response.status_code}: {e.response.text[:200]}")
+        return {
+            "activity": "Other Eco Action",
+            "confidence": 55,
+            "points": 15,
+            "carbon_saved": 1.0,
+            "reason": f"AI verification unavailable (API error {e.response.status_code}). Activity queued for manual review.",
         }
-
-        response = await client.post(
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent",
-            params={"key": settings.GEMINI_API_KEY},
-            json=payload,
-        )
-        response.raise_for_status()
-        data = response.json()
-
-        text = data["candidates"][0]["content"]["parts"][0]["text"].strip()
-        # Strip markdown code fences if present
-        if text.startswith("```"):
-            text = text.split("```")[1]
-            if text.startswith("json"):
-                text = text[4:]
-        text = text.strip()
-
-        result = json.loads(text)
-
-        # Clamp and validate
-        result["confidence"] = max(0, min(100, int(result.get("confidence", 0))))
-        # Use our point map for consistency
-        detected_activity = result.get("activity", "Other Eco Action")
-        result["points"] = ACTIVITY_POINT_MAP.get(detected_activity, 15)
-        result["carbon_saved"] = float(result.get("carbon_saved", CARBON_SAVINGS_MAP.get(detected_activity, 1.0)))
-        return result
+    except Exception as e:
+        import logging
+        logging.warning(f"Gemini verification failed: {e}")
+        return {
+            "activity": "Other Eco Action",
+            "confidence": 55,
+            "points": 15,
+            "carbon_saved": 1.0,
+            "reason": "AI verification unavailable. Activity queued for manual review.",
+        }
 
 
 async def _fetch_image_base64(client: httpx.AsyncClient, url: str) -> str:
