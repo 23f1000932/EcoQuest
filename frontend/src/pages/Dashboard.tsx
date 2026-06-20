@@ -215,7 +215,7 @@ export default function Dashboard() {
                 </div>
                 {user.badges && user.badges.length > 0 ? (
                   <div className="grid grid-cols-3 md:grid-cols-4 gap-3">
-                    {user.badges.slice(0, 8).map((badge, i) => (
+                    {user.badges.slice(0, 8).map((badge) => (
                       <div key={badge.id} className="glass-card p-3 flex flex-col items-center text-center hover:border-primary/40 transition-colors cursor-default" title={badge.name}>
                         <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/15 to-secondary/15 flex items-center justify-center mb-2 text-2xl">
                           {badge.icon}
