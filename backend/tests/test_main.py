@@ -1,14 +1,11 @@
 """Comprehensive backend API tests for EcoQuest."""
 import pytest
-from httpx import AsyncClient, ASGITransport
-from main import app
 
 
 @pytest.mark.asyncio
-async def test_health_check():
+async def test_health_check(client):
     """Test the health endpoint returns 200 and correct payload."""
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        response = await ac.get("/health")
+    response = await client.get("/health")
     assert response.status_code == 200
     data = response.json()
     assert data["status"] == "ok"
@@ -16,28 +13,25 @@ async def test_health_check():
 
 
 @pytest.mark.asyncio
-async def test_health_check_has_environment():
+async def test_health_check_has_environment(client):
     """Test health endpoint includes environment field."""
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        response = await ac.get("/health")
+    response = await client.get("/health")
     data = response.json()
     assert data["environment"] in ("development", "production", "staging")
 
 
 @pytest.mark.asyncio
-async def test_get_leaderboard():
+async def test_get_leaderboard(client):
     """Test leaderboard endpoint returns list."""
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        response = await ac.get("/api/leaderboard")
+    response = await client.get("/api/leaderboard")
     assert response.status_code == 200
     assert isinstance(response.json(), list)
 
 
 @pytest.mark.asyncio
-async def test_get_leaderboard_with_limit():
+async def test_get_leaderboard_with_limit(client):
     """Test leaderboard respects limit query param."""
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        response = await ac.get("/api/leaderboard?limit=5")
+    response = await client.get("/api/leaderboard?limit=5")
     assert response.status_code == 200
     data = response.json()
     assert isinstance(data, list)
@@ -45,35 +39,32 @@ async def test_get_leaderboard_with_limit():
 
 
 @pytest.mark.asyncio
-async def test_get_badges():
+async def test_get_badges(client):
     """Test badges endpoint returns list."""
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        response = await ac.get("/api/badges")
+    response = await client.get("/api/badges")
     assert response.status_code == 200
     data = response.json()
     assert isinstance(data, list)
 
 
 @pytest.mark.asyncio
-async def test_get_badges_have_required_fields():
+async def test_get_badges_have_required_fields(client):
     """Test each badge has required fields."""
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        response = await ac.get("/api/badges")
+    response = await client.get("/api/badges")
     data = response.json()
-    if len(data) > 0:
-        badge = data[0]
-        assert "id" in badge
-        assert "name" in badge
-        assert "slug" in badge
-        assert "icon" in badge
-        assert "points_req" in badge
+    assert len(data) > 0, "Seed data should have created badges"
+    badge = data[0]
+    assert "id" in badge
+    assert "name" in badge
+    assert "slug" in badge
+    assert "icon" in badge
+    assert "points_req" in badge
 
 
 @pytest.mark.asyncio
-async def test_get_impact():
+async def test_get_impact(client):
     """Test impact endpoint returns stats."""
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        response = await ac.get("/api/impact")
+    response = await client.get("/api/impact")
     assert response.status_code == 200
     data = response.json()
     assert "total_users" in data
@@ -85,10 +76,9 @@ async def test_get_impact():
 
 
 @pytest.mark.asyncio
-async def test_impact_values_are_numbers():
+async def test_impact_values_are_numbers(client):
     """Test impact values are numeric types."""
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        response = await ac.get("/api/impact")
+    response = await client.get("/api/impact")
     data = response.json()
     assert isinstance(data["total_users"], int)
     assert isinstance(data["total_activities"], int)
@@ -97,33 +87,30 @@ async def test_impact_values_are_numbers():
 
 
 @pytest.mark.asyncio
-async def test_get_rewards():
+async def test_get_rewards(client):
     """Test rewards endpoint returns list."""
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        response = await ac.get("/api/rewards")
+    response = await client.get("/api/rewards")
     assert response.status_code == 200
     data = response.json()
     assert isinstance(data, list)
 
 
 @pytest.mark.asyncio
-async def test_rewards_have_required_fields():
+async def test_rewards_have_required_fields(client):
     """Test each reward has required fields."""
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        response = await ac.get("/api/rewards")
+    response = await client.get("/api/rewards")
     data = response.json()
-    if len(data) > 0:
-        reward = data[0]
-        assert "id" in reward
-        assert "title" in reward
-        assert "points_req" in reward
+    assert len(data) > 0, "Seed data should have created rewards"
+    reward = data[0]
+    assert "id" in reward
+    assert "title" in reward
+    assert "points_req" in reward
 
 
 @pytest.mark.asyncio
-async def test_logout():
+async def test_logout(client):
     """Test logout endpoint returns success message."""
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        response = await ac.post("/api/auth/logout")
+    response = await client.post("/api/auth/logout")
     assert response.status_code == 200
     data = response.json()
     assert "message" in data
@@ -131,63 +118,56 @@ async def test_logout():
 
 
 @pytest.mark.asyncio
-async def test_verify_without_token():
+async def test_verify_without_token(client):
     """Test verify endpoint rejects request without valid token."""
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        response = await ac.post("/api/auth/verify", json={"supabase_token": "invalid-token"})
+    response = await client.post("/api/auth/verify", json={"supabase_token": "invalid-token"})
     assert response.status_code == 401
 
 
 @pytest.mark.asyncio
-async def test_protected_endpoint_without_auth():
+async def test_protected_endpoint_without_auth(client):
     """Test protected endpoints require authentication."""
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        response = await ac.get("/api/badges/mine")
+    response = await client.get("/api/badges/mine")
     assert response.status_code in (401, 403)
 
 
 @pytest.mark.asyncio
-async def test_redeem_without_auth():
+async def test_redeem_without_auth(client):
     """Test reward redemption requires authentication."""
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        response = await ac.post("/api/rewards/fake-id/redeem")
+    response = await client.post("/api/rewards/fake-id/redeem")
     assert response.status_code in (401, 403)
 
 
 @pytest.mark.asyncio
-async def test_nonexistent_route():
+async def test_nonexistent_route(client):
     """Test 404 for non-existent routes."""
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        response = await ac.get("/api/nonexistent")
+    response = await client.get("/api/nonexistent")
     assert response.status_code == 404
 
 
 @pytest.mark.asyncio
-async def test_cors_headers():
+async def test_cors_headers(client):
     """Test CORS headers are present on responses."""
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        response = await ac.options(
-            "/health",
-            headers={
-                "Origin": "http://localhost:5173",
-                "Access-Control-Request-Method": "GET",
-            },
-        )
+    response = await client.options(
+        "/health",
+        headers={
+            "Origin": "http://localhost:5173",
+            "Access-Control-Request-Method": "GET",
+        },
+    )
     assert response.status_code == 200
     assert "access-control-allow-origin" in response.headers
 
 
 @pytest.mark.asyncio
-async def test_leaderboard_limit_validation():
+async def test_leaderboard_limit_validation(client):
     """Test leaderboard rejects limit > 100."""
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        response = await ac.get("/api/leaderboard?limit=200")
+    response = await client.get("/api/leaderboard?limit=200")
     assert response.status_code == 422
 
 
 @pytest.mark.asyncio
-async def test_activities_without_auth():
+async def test_activities_without_auth(client):
     """Test activities listing requires auth."""
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        response = await ac.get("/api/activities/history")
+    response = await client.get("/api/activities/history")
     assert response.status_code in (401, 403)
