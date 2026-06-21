@@ -10,6 +10,7 @@ from anti_cheat import compute_phash, is_duplicate
 from config import settings
 from slowapi import Limiter
 from slowapi.util import get_remote_address
+import asyncio
 import uuid
 from datetime import datetime, date
 import math
@@ -103,7 +104,7 @@ async def upload_activity(
         raise HTTPException(status_code=429, detail=f"Daily upload limit of {settings.MAX_DAILY_UPLOADS} reached")
 
     # Compute pHash and check for duplicates
-    image_hash = compute_phash(image_bytes)
+    image_hash = await asyncio.to_thread(compute_phash, image_bytes)
     hashes_result = await db.execute(
         select(Activity.image_hash).where(
             Activity.user_id == current_user.id,

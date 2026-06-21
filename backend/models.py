@@ -33,7 +33,7 @@ class User(Base):
     name = Column(String, nullable=False)
     email = Column(String, unique=True, nullable=False)
     avatar_url = Column(String, nullable=True)
-    points = Column(Integer, nullable=False, default=0)
+    points = Column(Integer, nullable=False, default=0, index=True)
     level = Column(Integer, nullable=False, default=1)
     carbon_saved = Column(Float, nullable=False, default=0.0)
     is_admin = Column(Boolean, nullable=False, default=False)
@@ -51,7 +51,7 @@ class Activity(Base):
     __tablename__ = "activities"
 
     id = Column(String, primary_key=True, default=gen_uuid)
-    user_id = Column(String, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    user_id = Column(String, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     image_url = Column(Text, nullable=False)
     image_hash = Column(String, nullable=True)
     description = Column(Text, nullable=True)
@@ -60,9 +60,9 @@ class Activity(Base):
     carbon_saved = Column(Float, nullable=False, default=0.0)
     confidence = Column(Float, nullable=False, default=0.0)
     ai_response = Column(JSON, nullable=True)
-    status = Column(SAEnum(ActivityStatus), nullable=False, default=ActivityStatus.pending)
+    status = Column(SAEnum(ActivityStatus), nullable=False, default=ActivityStatus.pending, index=True)
     rejection_note = Column(Text, nullable=True)
-    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow, index=True)
 
     user = relationship("User", back_populates="activities")
 
