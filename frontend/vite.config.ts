@@ -1,4 +1,5 @@
-import { defineConfig } from 'vitest/config'
+/// <reference types="vitest" />
+import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 // https://vitejs.dev/config/
@@ -10,8 +11,13 @@ export default defineConfig({
     sourcemap: false,
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom', 'recharts', 'framer-motion'],
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('react')) return 'vendor-react';
+            if (id.includes('framer-motion')) return 'vendor-motion';
+            if (id.includes('recharts')) return 'vendor-recharts';
+            return 'vendor';
+          }
         },
       },
     },
@@ -19,6 +25,7 @@ export default defineConfig({
   server: {
     port: 5173,
   },
+  // @ts-expect-error - vitest adds test to UserConfig
   test: {
     environment: 'jsdom',
     setupFiles: ['./src/setupTests.ts'],

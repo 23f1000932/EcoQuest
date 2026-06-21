@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import App from './App'
-import { vi } from 'vitest'
+import { vi, describe, it, expect } from 'vitest'
 import { useAuth } from './hooks/useAuth'
 
 // Mock the hook so we don't need Supabase connected
