@@ -1,17 +1,19 @@
+import { lazy, Suspense } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import { useAuth } from './hooks/useAuth'
 import Navbar from './components/Navbar'
 import AuthModal from './components/AuthModal'
 import { ProtectedRoute, AdminRoute } from './components/ProtectedRoute'
-import Landing from './pages/Landing'
-import Dashboard from './pages/Dashboard'
-import Upload from './pages/Upload'
-import Leaderboard from './pages/Leaderboard'
-import Profile from './pages/Profile'
-import Rewards from './pages/Rewards'
-import Impact from './pages/Impact'
-import Admin from './pages/Admin'
+
+const Landing = lazy(() => import('./pages/Landing'))
+const Dashboard = lazy(() => import('./pages/Dashboard'))
+const Upload = lazy(() => import('./pages/Upload'))
+const Leaderboard = lazy(() => import('./pages/Leaderboard'))
+const Profile = lazy(() => import('./pages/Profile'))
+const Rewards = lazy(() => import('./pages/Rewards'))
+const Impact = lazy(() => import('./pages/Impact'))
+const Admin = lazy(() => import('./pages/Admin'))
 
 export default function App() {
   const { loading } = useAuth()
@@ -22,20 +24,22 @@ export default function App() {
     <div className="min-h-screen bg-background text-on-background">
       <Navbar />
       <AuthModal />
-      <Routes>
-        <Route path="/" element={<Landing />} />
-        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-        <Route path="/upload" element={<ProtectedRoute><Upload /></ProtectedRoute>} />
-        <Route path="/leaderboard" element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />
-        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-        <Route path="/rewards" element={<ProtectedRoute><Rewards /></ProtectedRoute>} />
-        <Route path="/impact" element={<ProtectedRoute><Impact /></ProtectedRoute>} />
-        <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
-        {/* /activities redirects to /profile which shows the activity history */}
-        <Route path="/activities" element={<Navigate to="/profile" replace />} />
-        {/* Catch-all: redirect unknown routes to landing */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+      <Suspense fallback={<div className="flex h-[50vh] items-center justify-center"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" /></div>}>
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/upload" element={<ProtectedRoute><Upload /></ProtectedRoute>} />
+          <Route path="/leaderboard" element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route path="/rewards" element={<ProtectedRoute><Rewards /></ProtectedRoute>} />
+          <Route path="/impact" element={<ProtectedRoute><Impact /></ProtectedRoute>} />
+          <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
+          {/* /activities redirects to /profile which shows the activity history */}
+          <Route path="/activities" element={<Navigate to="/profile" replace />} />
+          {/* Catch-all: redirect unknown routes to landing */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Suspense>
       <Toaster
         position="top-right"
         toastOptions={{

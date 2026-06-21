@@ -37,7 +37,7 @@ export default function Leaderboard() {
             <div className="flex flex-col items-center gap-2">
               <div className="w-14 h-14 rounded-full overflow-hidden ring-2 ring-gray-300 bg-surface-container">
                 {leaderboard[1].avatar_url
-                  ? <img src={leaderboard[1].avatar_url} alt="" className="w-full h-full object-cover" />
+                  ? <img src={leaderboard[1].avatar_url} alt={`${leaderboard[1].name}'s avatar`} loading="lazy" className="w-full h-full object-cover" />
                   : <div className="w-full h-full flex items-center justify-center text-on-surface-variant font-bold text-xl">{leaderboard[1].name[0]}</div>}
               </div>
               <p className="text-on-surface-variant text-sm font-medium max-w-20 text-center truncate">{leaderboard[1].name}</p>
@@ -54,7 +54,7 @@ export default function Leaderboard() {
               <div className="w-20 h-20 rounded-full overflow-hidden ring-2 ring-yellow-400 bg-surface-container"
                 style={{ boxShadow: '0 0 20px rgba(234,179,8,0.3)' }}>
                 {leaderboard[0].avatar_url
-                  ? <img src={leaderboard[0].avatar_url} alt="" className="w-full h-full object-cover" />
+                  ? <img src={leaderboard[0].avatar_url} alt={`${leaderboard[0].name}'s avatar`} loading="lazy" className="w-full h-full object-cover" />
                   : <div className="w-full h-full flex items-center justify-center text-on-surface font-bold text-2xl">{leaderboard[0].name[0]}</div>}
               </div>
               <p className="text-on-background font-bold max-w-24 text-center truncate">{leaderboard[0].name}</p>
@@ -70,7 +70,7 @@ export default function Leaderboard() {
             <div className="flex flex-col items-center gap-2">
               <div className="w-14 h-14 rounded-full overflow-hidden ring-2 ring-amber-600 bg-surface-container">
                 {leaderboard[2].avatar_url
-                  ? <img src={leaderboard[2].avatar_url} alt="" className="w-full h-full object-cover" />
+                  ? <img src={leaderboard[2].avatar_url} alt={`${leaderboard[2].name}'s avatar`} loading="lazy" className="w-full h-full object-cover" />
                   : <div className="w-full h-full flex items-center justify-center text-on-surface-variant font-bold text-xl">{leaderboard[2].name[0]}</div>}
               </div>
               <p className="text-on-surface-variant text-sm font-medium max-w-20 text-center truncate">{leaderboard[2].name}</p>

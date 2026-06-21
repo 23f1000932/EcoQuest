@@ -80,19 +80,20 @@ export default function Profile() {
                   className="input-field max-w-xs text-xl font-bold py-1.5"
                   value={name}
                   onChange={e => setName(e.target.value)}
+                  // eslint-disable-next-line jsx-a11y/no-autofocus
                   autoFocus
                 />
-                <button onClick={handleSaveName} className="p-2 bg-primary/10 rounded-xl text-primary hover:bg-primary/20 transition-colors">
+                <button onClick={handleSaveName} aria-label="Save name" className="p-2 bg-primary/10 rounded-xl text-primary hover:bg-primary/20 transition-colors">
                   <Check className="w-4 h-4" />
                 </button>
-                <button onClick={() => setEditing(false)} className="p-2 bg-surface-container rounded-xl text-on-surface-variant hover:bg-surface-container-high transition-colors">
+                <button onClick={() => setEditing(false)} aria-label="Cancel editing" className="p-2 bg-surface-container rounded-xl text-on-surface-variant hover:bg-surface-container-high transition-colors">
                   <X className="w-4 h-4" />
                 </button>
               </div>
             ) : (
               <div className="flex items-center gap-2 mb-1 justify-center sm:justify-start">
                 <h1 className="text-2xl font-black text-on-background font-geist">{user.name}</h1>
-                <button id="edit-name-btn" onClick={() => setEditing(true)} className="p-1 text-on-surface-variant hover:text-primary transition-colors">
+                <button id="edit-name-btn" aria-label="Edit name" onClick={() => setEditing(true)} className="p-1 text-on-surface-variant hover:text-primary transition-colors">
                   <Edit2 className="w-4 h-4" />
                 </button>
               </div>

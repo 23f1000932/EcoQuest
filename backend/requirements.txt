@@ -15,3 +15,8 @@ imagehash>=4.3.1
 slowapi>=0.1.9
 python-dotenv>=1.0.1
 supabase>=2.5.0
+
+# Testing and formatting
+pytest>=8.0.0
+pytest-asyncio>=0.23.0
+ruff>=0.4.0

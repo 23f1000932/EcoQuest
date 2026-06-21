@@ -36,6 +36,7 @@ export default function Admin() {
     finally { setLoading(false) }
   }
 
+  // eslint-disable-next-line
   useEffect(() => { loadData(tab) }, [tab])
 
   const approve = async (id: string) => {
@@ -101,7 +102,7 @@ export default function Admin() {
                     {/* Image */}
                     <div className="w-32 h-32 rounded-xl overflow-hidden bg-white/5 flex-shrink-0">
                       {activity.image_url && !activity.image_url.includes('placeholder') ? (
-                        <img src={activity.image_url} alt="" className="w-full h-full object-cover" />
+                        <img src={activity.image_url} alt={`Activity ${activity.activity_type}`} loading="lazy" className="w-full h-full object-cover" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-4xl">
                           {ACTIVITY_ICONS[activity.activity_type] || '🌱'}

@@ -19,7 +19,7 @@ export default function Footer() {
             </p>
             <div className="flex gap-4 mt-1">
               {['Twitter', 'Instagram', 'GitHub'].map(s => (
-                <a key={s} href="#" className="text-on-surface-variant hover:text-primary transition-colors text-sm">
+                <a key={s} href="/" className="text-on-surface-variant hover:text-primary transition-colors text-sm">
                   {s}
                 </a>
               ))}
@@ -42,7 +42,7 @@ export default function Footer() {
           <div>
             <h3 className="text-on-surface-variant text-xs font-semibold uppercase tracking-widest mb-4">Legal</h3>
             <ul className="space-y-2.5">
-              {[['About', '#'], ['Privacy Policy', '#'], ['Terms of Service', '#'], ['Contact', '#']].map(([label, href]) => (
+              {[['About', '/'], ['Privacy Policy', '/'], ['Terms of Service', '/'], ['Contact', '/']].map(([label, href]) => (
                 <li key={label}>
                   <a href={href} className="text-on-surface-variant hover:text-primary text-sm transition-colors">{label}</a>
                 </li>
