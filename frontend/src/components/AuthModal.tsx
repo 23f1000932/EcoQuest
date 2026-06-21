@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '../hooks/useAuth'
 import { useNavigate } from 'react-router-dom'
@@ -21,11 +21,28 @@ export default function AuthModal() {
   const [name, setName] = useState('')
   const [error, setError] = useState('')
 
+  // Refs for autofocus
+  const nameRef = useRef<HTMLInputElement>(null)
+  const emailRef = useRef<HTMLInputElement>(null)
+
   const reset = () => {
     setEmail(''); setPassword(''); setName(''); setError(''); setShowPassword(false)
   }
 
   const switchTab = (t: Tab) => { setTab(t); reset() }
+
+  // Autofocus the first input on modal open or tab change
+  useEffect(() => {
+    if (!authModalOpen) return
+    const timer = setTimeout(() => {
+      if (tab === 'signup') {
+        nameRef.current?.focus()
+      } else {
+        emailRef.current?.focus()
+      }
+    }, 100)
+    return () => clearTimeout(timer)
+  }, [authModalOpen, tab])
 
   const handleGoogle = async () => {
     setGoogleLoading(true)
@@ -99,12 +116,18 @@ export default function AuthModal() {
             className="fixed inset-0 z-[101] flex items-center justify-center p-4"
             onClick={e => e.stopPropagation()}
           >
-            <div className="w-full max-w-md bg-surface-container-lowest border border-outline-variant rounded-3xl shadow-2xl overflow-hidden">
+            <div
+              className="w-full max-w-md bg-surface-container-lowest border border-outline-variant rounded-3xl shadow-2xl overflow-hidden"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="auth-modal-title"
+            >
 
               {/* Header */}
               <div className="relative p-6 pb-0">
                 <button
                   onClick={closeAuthModal}
+                  aria-label="Close"
                   className="absolute top-4 right-4 p-2 rounded-xl text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-all"
                 >
                   <X className="w-5 h-5" />
@@ -115,16 +138,18 @@ export default function AuthModal() {
                   <div className="w-9 h-9 bg-primary rounded-xl flex items-center justify-center shadow-sm">
                     <Leaf className="w-5 h-5 text-on-primary" />
                   </div>
-                  <span className="font-bold text-on-background text-xl">
+                  <span id="auth-modal-title" className="font-bold text-on-background text-xl">
                     Eco<span className="text-primary">Quest</span>
                   </span>
                 </div>
 
                 {/* Tab switcher */}
-                <div className="flex bg-surface-container rounded-xl p-1 mb-6">
+                <div className="flex bg-surface-container rounded-xl p-1 mb-6" role="tablist">
                   {(['signin', 'signup'] as Tab[]).map(t => (
                     <button
                       key={t}
+                      role="tab"
+                      aria-selected={tab === t}
                       onClick={() => switchTab(t)}
                       className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                         tab === t
@@ -150,7 +175,7 @@ export default function AuthModal() {
                   {googleLoading ? (
                     <Loader2 className="w-4 h-4 animate-spin text-primary" />
                   ) : (
-                    <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" aria-hidden="true">
                       <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                       <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
                       <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
@@ -171,8 +196,11 @@ export default function AuthModal() {
                 <form onSubmit={handleSubmit} className="space-y-3">
                   {tab === 'signup' && (
                     <div className="relative">
+                      <label htmlFor="auth-name" className="sr-only">Full name</label>
                       <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant" />
                       <input
+                        ref={nameRef}
+                        id="auth-name"
                         type="text"
                         placeholder="Full name"
                         value={name}
@@ -184,8 +212,11 @@ export default function AuthModal() {
                   )}
 
                   <div className="relative">
+                    <label htmlFor="auth-email" className="sr-only">Email address</label>
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant" />
                     <input
+                      ref={emailRef}
+                      id="auth-email"
                       type="email"
                       placeholder="Email address"
                       value={email}
@@ -196,8 +227,10 @@ export default function AuthModal() {
                   </div>
 
                   <div className="relative">
+                    <label htmlFor="auth-password" className="sr-only">Password</label>
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant" />
                     <input
+                      id="auth-password"
                       type={showPassword ? 'text' : 'password'}
                       placeholder="Password"
                       value={password}
@@ -209,6 +242,7 @@ export default function AuthModal() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(v => !v)}
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors"
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -221,6 +255,7 @@ export default function AuthModal() {
                       initial={{ opacity: 0, y: -4 }}
                       animate={{ opacity: 1, y: 0 }}
                       className="text-error text-xs px-1"
+                      role="alert"
                     >
                       {error}
                     </motion.p>

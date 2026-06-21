@@ -68,6 +68,7 @@ export default function UploadZone({ onFileSelected, disabled }: Props) {
               {!disabled && (
                 <button
                   onClick={clearPreview}
+                  aria-label="Remove image"
                   className="p-2 bg-surface/80 hover:bg-surface rounded-full text-on-surface transition-all backdrop-blur-sm"
                 >
                   <X className="w-4 h-4" />
