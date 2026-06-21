@@ -10,6 +10,33 @@
 
 ---
 
+## 🎯 Chosen Vertical
+
+**Individual Sustainability Tracking & Behavior-Change Gamification.**
+
+EcoQuest India targets the _individual eco-action_ vertical — empowering everyday citizens to log, verify, and be rewarded for personal sustainable actions (planting trees, cycling, using public transport, segregating waste). The platform is designed as a behavior-change engine: by combining AI-powered photo verification with gamification mechanics (points, streaks, badges, leaderboards, redeemable rewards), it turns sporadic good intentions into consistent green habits. The focus is on India, where sustainability awareness is growing rapidly but tools for individual accountability remain limited.
+
+---
+
+## 🧠 Approach & Logic
+
+The core workflow follows a **photo-upload → AI classification → confidence-gated approval → reward** pipeline. A user uploads a photo of their eco-action (e.g., a planted sapling, a metro ticket, a segregated waste bin). The image bytes are sent to Google Gemini 2.5 Flash Vision, which returns a structured JSON with the detected activity type, a confidence score (0–100), estimated CO₂ savings, and a one-sentence reason.
+
+The confidence score drives a three-tier decision gate: **≥ 70% confidence** → auto-approved, points awarded instantly; **40–69% confidence** → queued for admin manual review; **< 40% confidence** → auto-rejected as unlikely to be a genuine eco-action. Before AI verification, a perceptual hash (pHash) of the image is computed and compared against the user's past uploads to detect duplicate or near-identical submissions (Hamming distance ≤ 10).
+
+On approval, the system awards activity-specific points and carbon savings, updates the user's level (a 6-tier progression from Seedling to Sustainability Legend), checks for newly unlocked badges, and increments the user's streak if they uploaded on consecutive days (+5 bonus points for streaks). Points can be redeemed for tangible rewards (gift cards, eco merchandise, tree planting via partner NGOs).
+
+---
+
+## 📋 Assumptions Made
+
+- **A single photo is sufficient evidence** of an eco-activity. The system does not require GPS coordinates, timestamps from EXIF, or multi-photo verification — it trusts Gemini Vision's classification with confidence gating and admin review as safeguards.
+- **Users are in India.** Point values, carbon savings estimates, activity types (e.g., "Public Transport" reflecting Indian metro/bus systems), and reward catalog (₹ denominations) are calibrated for the Indian context.
+- **SQLite for development, PostgreSQL for production.** The database layer uses `aiosqlite` locally and auto-switches to `asyncpg` when a `postgresql://` connection string is provided, with no code changes needed.
+- **Carbon savings are estimates, not precise measurements.** The `CARBON_SAVINGS_MAP` uses reasonable per-action averages (e.g., 20 kg CO₂ per tree planted, 2.5 kg per public transport trip) rather than scientifically measured values.
+- **Daily upload limit of 10 activities per user** to prevent spam and maintain platform integrity.
+- **Supabase handles authentication.** The backend verifies Supabase-issued JWTs server-side and does not implement its own password storage or OAuth flows.
+
 ## 🎯 My Goal
 
 India faces a massive awareness and action gap in sustainability. People *want* to be eco-friendly, but lack the motivation, accountability, and community to actually do it consistently.
