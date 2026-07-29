@@ -390,7 +390,7 @@ Contributions are welcome! Feel free to:
 
 ## 👤 Author
 
-**Ayan** — [@23f1000932](https://github.com/23f1000932)
+**Ayan Hussain** — [@23f1000932](https://github.com/23f1000932)
 
 Built with ❤️ for a greener India 🇮🇳
 
